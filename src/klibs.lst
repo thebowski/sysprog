@@ -1,0 +1,38 @@
+GAS LISTING klibs.s 			page 1
+
+
+   1              	# 1 "klibs.S"
+   1              	/*
+   0              	
+   0              	
+   2              	** SCCS ID:	@(#)klibs.S	1.1	4/22/16
+   3              	**
+   4              	** File:	klibs.S
+   5              	**
+   6              	** Author:	CSCI-452 class of 20155
+   7              	**
+   8              	** Contributor:
+   9              	**
+  10              	** Description:	Kernel library assembly-language implementations
+  11              	*/
+  12              	
+  13              	#define	__SP_KERNEL__
+  14              	#define	__SP_ASM__
+  15              	
+  16              	/*
+  17              	** _get_ebp - return current contents of EBP at the time of the call
+  18              	**
+  19              	** Could be used, e.g., by _kpanic to print a traceback
+  20              	*/
+  21              	
+  22              		.globl	_get_ebp
+  23              	_get_ebp:
+  24 0000 89E8     		movl	%ebp, %eax
+  25 0002 C3       		ret
+GAS LISTING klibs.s 			page 2
+
+
+DEFINED SYMBOLS
+             klibs.S:23     .text:0000000000000000 _get_ebp
+
+NO UNDEFINED SYMBOLS
