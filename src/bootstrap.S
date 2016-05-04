@@ -396,6 +396,14 @@ boot_sig:
 */
 
 switch:
+
+	//MEEEE
+	movl	$0x13,%ax
+	int	$0x10
+
+
+
+
 	cli
 	movb	$0x80, %al	/* disable NMIs */
 	outb	%al, $0x70

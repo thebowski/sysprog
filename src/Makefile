@@ -11,10 +11,10 @@
 # Lists of files
 #
 SYS_C_SRC = clock.c klibc.c process.c queue.c scheduler.c sio.c \
-	stack.c syscall.c system.c
+	stack.c syscall.c system.c graphics.c
 
 SYS_C_OBJ = clock.o klibc.o process.o queue.o scheduler.o sio.o \
-	stack.o syscall.o system.o
+	stack.o syscall.o system.o graphics.o
 
 SYS_S_SRC = klibs.S
 
@@ -55,7 +55,7 @@ USER_OPTIONS = -DDUMP_QUEUES -DCLEAR_BSS_SEGMENT -DISR_DEBUGGING_CODE -DSP_OS_CO
 #
 # We only want to include from the current directory and ~wrc/include
 #
-INCLUDES = -I. -I/home/fac/wrc/include
+INCLUDES = -I. -I/home/matthew/programs/sysprog/src/include
 
 #
 # Compilation/assembly/linking commands and options
@@ -160,7 +160,8 @@ floppy:	floppy.image
 	dd if=floppy.image of=/dev/fd0
 
 usb:	usb.image
-	/usr/local/dcs/bin/dcopy usb.image
+	#/usr/local/dcs/bin/dcopy usb.image
+	dd if=usb.image of=/dev/sdg && sync
 
 #
 # Special rule for creating the modification and offset programs
@@ -209,8 +210,8 @@ depend:
 
 startup.o: bootstrap.h
 isr_stubs.o: bootstrap.h
-c_io.o: c_io.h startup.h support.h /home/fac/wrc/include/x86arch.h
-support.o: startup.h support.h c_io.h /home/fac/wrc/include/x86arch.h
+c_io.o: c_io.h startup.h support.h /home/matthew/programs/sysprog/src/include
+support.o: startup.h support.h c_io.h /home/matthew/programs/sysprog/src/include
 support.o: bootstrap.h
 ulibs.o: syscall.h common.h
 ulibc.o: common.h ulib.h process.h stack.h queue.h

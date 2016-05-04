@@ -19,6 +19,7 @@
 #include "startup.h"
 #include "support.h"
 #include "x86arch.h"
+#include "include/x86arch.h"
 
 /*
 ** Video parameters, and state variables
