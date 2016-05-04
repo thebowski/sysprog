@@ -11,10 +11,10 @@
 # Lists of files
 #
 SYS_C_SRC = clock.c klibc.c process.c queue.c scheduler.c sio.c \
-	stack.c syscall.c system.c
+	stack.c syscall.c system.c graphics.c
 
 SYS_C_OBJ = clock.o klibc.o process.o queue.o scheduler.o sio.o \
-	stack.o syscall.o system.o
+	stack.o syscall.o system.o graphics.o
 
 SYS_S_SRC = klibs.S
 
@@ -160,7 +160,8 @@ floppy:	floppy.image
 	dd if=floppy.image of=/dev/fd0
 
 usb:	usb.image
-	/usr/local/dcs/bin/dcopy usb.image
+	#/usr/local/dcs/bin/dcopy usb.image
+	dd if=usb.image of=/dev/sdg && sync
 
 #
 # Special rule for creating the modification and offset programs

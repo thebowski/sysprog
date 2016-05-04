@@ -14,6 +14,8 @@
 
 #include "user.h"
 
+#include "graphics.h"
+
 /*
 ** USER PROCESSES
 **
@@ -72,8 +74,89 @@ int32_t user_y( void ); int32_t user_z( void );
 ** the status return from swrites().
 */
 
+
+
+
+
+
+
 int32_t user_a( void ) {
-	int i, j;
+
+	int x = 0, y = 0, dir = 0;
+
+	char color2 = 0;
+	char bgcolor = 200;
+	int step = 1;
+	int delay = 0;
+	while (1) {
+
+
+		cleartocolor(backbuffer, bgcolor);
+
+		
+
+		if (delay > 100){
+			bgcolor+= step;
+			delay = 0;
+		}
+		delay++;
+
+		if (bgcolor < 200 || bgcolor > 230)
+			step *= -1;
+
+		char color = 0;
+		for (int y = 0; y < 240; y += 16) {
+			for (int x = 0; x < 320; x += 16) {
+				putpixel(backbuffer, x, y, color++);
+			}
+
+		}
+
+
+		//180?
+
+		drawline(backbuffer, 160, 90, x, y, color2++);
+
+
+		if (dir == 0) x++;
+		if (dir == 1) y++;
+		if (dir == 2) x--;
+		if (dir == 3) y--;
+
+		if (x > 319){
+			dir = 1;
+			x--;
+		}
+		if (y > 200){
+			dir = 2;
+			y--;
+		}
+		if (x < 0){
+			dir = 3;
+			x++;
+		}
+		if (y < 0){
+			dir = 0;
+			y++;
+		}
+
+
+		vsync();
+		blit(screen, backbuffer, 0,0);
+
+
+//		for (int i = 0; i < 320; i += 32) {
+//			drawline(160, 120, i, 0, color++);
+//			drawline(160, 120, i, 239, color++);
+//		}
+//
+//		for (int i = 0; i < 240; i += 32) {
+//			drawline(160, 120, 0, i, color++);
+//			drawline(160, 120, 319, i, color++);
+//		}
+	}
+
+	/*int i, j;
 	int32_t status;
 	char buf[12];
 
@@ -97,15 +180,15 @@ int32_t user_a( void ) {
 	}
 
 	exit( EXIT_SUCCESS );
-
-	status = swrites( "a", 1 );	/* shouldn't happen! */
+	
+	status = swrites( "a", 1 );	 //shouldn't happen! 
 	if( status != SUCCESS ) {
 		cwrites( "User A, write 3 status ", 23 );
 		i = cvt_dec( buf, status );
 		cwrites( buf, i );
 		cwrites( "\n", 1 );
 	}
-
+	*/
 	return( 0 );  // shut the compiler up!
 
 }
