@@ -2,16 +2,17 @@
 #define _GRAPHICS_H_
 
 
-#define VGA_START 0x0A0000
+#define VGA_START ((uint8_t*) 0x0A0000)
 #define SCREEN_W 320
 #define SCREEN_H 200
-#define BPP 1
-#define VGA_END (VGA_START + SCREEN_W * SCREEN_H * BPP)
+#define VGA_SIZE (SCREEN_W * SCREEN_H)
 
-typedef struct _BITMAP BITMAP;
+typedef struct BITMAP BITMAP;
 
-extern BITMAP * screen;
-extern BITMAP * backbuffer;
+extern BITMAP *screen;
+extern BITMAP *backbuffer;
+
+extern BITMAP *sprite;
 
 
 //checkout klibc for blit and clearscreen ect
@@ -29,13 +30,13 @@ extern BITMAP * backbuffer;
 
 //can i save the bios interupt 10h and go in and out ie switching programs
 
-void putpixel(BITMAP * dest, int x, int y, uint8_t color);
+void putpixel(BITMAP *dest, int x, int y, uint8_t color);
 
-void cleartocolor(BITMAP * dest, uint8_t color);
+void cleartocolor(BITMAP *dest, uint8_t color);
 
-void drawline(BITMAP * dest, int x0, int y0, int x1, int y1, uint8_t color);
+void drawline(BITMAP *dest, int x0, int y0, int x1, int y1, uint8_t color);
 
-void blit(BITMAP * dest, BITMAP * src, int dest_x, int dest_y);
+void blit(BITMAP *dest, BITMAP *src, int dest_x, int dest_y);
 
 void vsync(void);
 

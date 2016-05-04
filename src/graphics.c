@@ -10,12 +10,40 @@
 #define INT_ABS(a) (((a) < 0) ? -(a): (a))
 
 
-uint8_t backbufferdata[SCREEN_W * SCREEN_H];
+uint8_t backbufferdata[VGA_SIZE];
 
-struct _BITMAP{
+#define NUM_SPRITES 1
+#define SPRITE_W 20
+#define SPRITE_H 20
+
+uint8_t sprites[NUM_SPRITES][SPRITE_W * SPRITE_H] =
+        {{
+          "ZZZZZZZZZZZZZZZZZZZZ"
+          "ZaaaZZZaaaaZZZaaaaaZ"
+          "ZaaaaaaaaaaaZZZaaaaZ"
+          "ZaaaaaaaaaaaZZZaaaaZ"
+          "ZaaaaaaaaaaZZZaaaaaZ"
+          "ZaaaaaaaaaZZZaaaaaaZ"
+          "ZaaaaaaaaaaZZZaaaaaZ"
+          "ZaaaaaaaaaZZZaaaaaaZ"
+          "ZaaaaaaaZZZZaaaaaaaZ"
+          "ZaaaaaZZZZZZZZZZZaaZ"
+          "ZaZZZZZZZZZZZZZZZZaZ"
+          "ZaaaaaaaaaZaaaaaaaaZ"
+          "ZaaZaaaaaaaaZaaaaaaZ"
+          "ZaaaaaaaaaaaaaZaaaaZ"
+          "ZaaaZaaaaaaaaaaZaaaZ"
+          "ZaaaaaaaaaaaZaaaaaaZ"
+          "ZaaaaaaaaaaaaaaaaaaZ"
+          "ZZaaaaaaaaaaaaaaaaaZ"
+          "ZaaaaaaaaaaaaaaaaaaZ"
+          "ZZZZZZZZZZZZZZZZZZZ"
+         }};
+
+struct BITMAP {
     int width;
     int height;
-    uint8_t * data;
+    uint8_t *data;
     //size == width * height
 };
 
@@ -24,8 +52,13 @@ BITMAP __screen = {.width = SCREEN_W, .height = SCREEN_H, .data = VGA_START};
 BITMAP __backbuffer = {.width = SCREEN_W, .height = SCREEN_H, .data = backbufferdata};
 
 
-BITMAP * screen = &__screen;
-BITMAP * backbuffer = &__backbuffer;
+BITMAP *screen = &__screen;
+BITMAP *backbuffer = &__backbuffer;
+
+BITMAP __sprite = {.width = SPRITE_W, .height = SPRITE_H, .data = sprites[0]};
+BITMAP *sprite = &__sprite;
+
+
 
 
 void vsync() {
@@ -40,26 +73,29 @@ void vsync() {
 }
 
 
-void blit(BITMAP * dest, BITMAP * src, int dest_x, int dest_y){
-    uint8_t * destdata = dest->data;
-    int destwidth = dest->width;
-    int destlength = destwidth * dest->height ;
-    uint8_t * srcdata = src->data;
-    int srcwidth = src->width;
+void blit(BITMAP *dest, BITMAP *src, int dest_x, int dest_y) {
+    int destlength = dest->width * dest->height;
+    int srcwidthtocopy = (src->width < dest->width - dest_x) ? src->width : dest->width - dest_x;
 
-    int srcwidthtocopy = (srcwidth < destwidth - dest_x) ? srcwidth : destwidth - dest_x;
+    if (dest_x + src->width <= 0 ||
+        dest_y + src->height <= 0 ||
+        dest->width - dest_x <= 0 ||
+        dest->height - dest_y <= 0)
+        return;
 
     //copy rows of src into dest
-    for (int row = 0; row < src->height; row++){
-        int offset = dest_x + destwidth * (row + dest_y);
+    for (int row = 0; row < src->height; row++) {
+        int offset = dest_x + dest->width * (row + dest_y);
+        if (offset < 0)
+            continue;
         if (offset > destlength)
             break;
 
-        _kmemcpy(destdata + offset, srcdata + row * srcwidth, srcwidthtocopy);
+        _kmemcpy(dest->data + offset, src->data + row * src->width, srcwidthtocopy);
     }
 }
 
-void cleartocolor(BITMAP * dest, uint8_t color) {
+void cleartocolor(BITMAP *dest, uint8_t color) {
 //    uint32_t colorblock = ((uint32_t) color & 0xFF) << 24
 //                          | ((uint32_t) color & 0xFF) << 16
 //                          | ((uint32_t) color & 0xFF) << 8
@@ -74,7 +110,7 @@ void cleartocolor(BITMAP * dest, uint8_t color) {
 }
 
 
-void putpixel(BITMAP * dest, int x, int y, uint8_t color) {
+inline void putpixel(BITMAP *dest, int x, int y, uint8_t color) {
 
 
     //try shifts ie y << 8 + y << 6      320y = 256y + 64y,
@@ -108,7 +144,7 @@ __asm__("movl	%0,%%edi;"
 }
 
 
-void drawline(BITMAP * dest, int x0, int y0, int x1, int y1, uint8_t color) {
+void drawline(BITMAP *dest, int x0, int y0, int x1, int y1, uint8_t color) {
 
     int swapped = 0;
     if (x0 > x1) {//steep points into left to right order
