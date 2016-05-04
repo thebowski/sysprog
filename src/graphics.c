@@ -74,14 +74,26 @@ void vsync() {
 
 
 void blit(BITMAP *dest, BITMAP *src, int dest_x, int dest_y) {
-    int destlength = dest->width * dest->height;
-    int srcwidthtocopy = (src->width < dest->width - dest_x) ? src->width : dest->width - dest_x;
-
     if (dest_x + src->width <= 0 ||
         dest_y + src->height <= 0 ||
         dest->width - dest_x <= 0 ||
         dest->height - dest_y <= 0)
         return;
+
+    int destlength = dest->width * dest->height;
+    int srcwidthtocopy = src->width;
+    int srcstartx = 0;
+    //cut off pixels that pass right size of destination
+    //in this case simply stop copying pixels once they are outside of dest
+    if (src->width >= dest->width - dest_x)
+        srcwidthtocopy = dest->width - dest_x;
+    //cut off pixels that pass left size of destination
+    //in this case we need to start copying from the middle of src
+    if (dest_x < 0){
+        srcstartx = INT_ABS(dest_x); //location of first pixel overlap inside dest
+        srcwidthtocopy = src->width - srcstartx; //copy from srcstartx to end
+        dest_x = 0; //must be set to 0 so pixels will not be copied outside of dest
+    }
 
     //copy rows of src into dest
     for (int row = 0; row < src->height; row++) {
@@ -91,7 +103,7 @@ void blit(BITMAP *dest, BITMAP *src, int dest_x, int dest_y) {
         if (offset > destlength)
             break;
 
-        _kmemcpy(dest->data + offset, src->data + row * src->width, srcwidthtocopy);
+        _kmemcpy(dest->data + offset, src->data + srcstartx + row * src->width, srcwidthtocopy);
     }
 }
 
