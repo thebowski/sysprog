@@ -125,7 +125,6 @@ int32_t user_a(void) {
 
     char color2 = 0;
     char bgcolor = 200;
-    int step = 1;
     int delay = 0;
     while (1) {
 
@@ -133,14 +132,14 @@ int32_t user_a(void) {
         cleartocolor(backbuffer, bgcolor);
 
 
-        if (delay > 100) {
-            bgcolor += step;
+        if (delay > 50) {
+            bgcolor++;
+
             delay = 0;
+            if (bgcolor == get_trans(backbuffer))
+                delay = -1000;
         }
         delay++;
-
-        if (bgcolor < 200 || bgcolor > 230)
-            step *= -1;
 
         char color = 0;
         for (int y = 0; y < 240; y += 16) {
@@ -172,19 +171,25 @@ int32_t user_a(void) {
         sx2 += .5;
         if (sx2 > 320){
             sx2 = -20;
-            sy2 += 20;
+            sy2 += 16;
         }
         if (sy2 > 200){
             sy2 = 0;
         }
 
+        drawline(backbuffer, 160, 90, x, y, color2++);
+        drawline(backbuffer, sx, sy, (int)sx2, sy2, color2);
+        drawline(backbuffer, sx2, sy2, 320 - (int) sx2, 200 - sy2, 255 - color2);
+
         blit(backbuffer, sprite, sx, sy);
 
         blit(backbuffer, sprite2, (int)sx2, sy2);
 
+        blit(backbuffer, sprite2, 320 - (int)sx2, 200 - sy2);
+
         //180?
 
-        drawline(backbuffer, 160, 90, x, y, color2++);
+
 
 
         if (dir == 0) x++;
@@ -208,6 +213,11 @@ int32_t user_a(void) {
             dir = 0;
             y++;
         }
+
+
+        blit_ex(backbuffer, backbuffer, 280, 0, 140, 80, 40, 40);
+        drawline(backbuffer, 280, 0, 280, 40, 0);
+        drawline(backbuffer, 280, 40, 320, 40, 0);
 
 
         vsync();

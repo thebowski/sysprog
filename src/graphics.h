@@ -31,6 +31,7 @@ extern BITMAP *sprite2;
 
 //can i save the bios interupt 10h and go in and out ie switching programs
 
+
 void putpixel(BITMAP *dest, int x, int y, uint8_t color);
 
 void cleartocolor(BITMAP *dest, uint8_t color);
@@ -42,5 +43,7 @@ void blit(BITMAP *dest, BITMAP *src, int dest_x, int dest_y);
 void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int src_y, int width, int height);
 
 void vsync(void);
+
+uint8_t get_trans(BITMAP *bmp);
 
 #endif
