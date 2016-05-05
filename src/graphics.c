@@ -8,6 +8,7 @@
 #include "klib.h"
 
 #define INT_ABS(a) (((a) < 0) ? -(a): (a))
+#define CLAMP(a, min, max)  ((a) < (min)) ? (min) : (((a) >= (max)) ? (max) : (a))
 
 
 uint8_t backbufferdata[VGA_SIZE];
@@ -51,13 +52,13 @@ uint8_t sprites[NUM_SPRITES][SPRITE_W * SPRITE_H] =
                          "|333333333333333333|"
                          "|aaaaaZZZZZZZZZZZaa|"
                          "|aZZZZZZZZZZZZZZZZa|"
-                         "||||||||||||||||||||"
-                         "||||||||||||||||||||"
-                         "||||||||||||||||||||"
-                         "||||||||||||||||||||"
-                         "||||||||||||||||||||"
-                         "||||||||||||||||||||"
-                         "||||||||||||||||||||"
+                         "||||||22222222||||||"
+                         "||||||2222222222||||"
+                         "||||||22222222||||||"
+                         "||||||22222222||||||"
+                         "||||||22222222||||||"
+                         "||||||22222222||||||"
+                         "||||||22222222||||||"
                          "||||||||||||||||||||"
                          "||||||||||||||||||||"
          }};
@@ -82,12 +83,12 @@ BITMAP *backbuffer = &__backbuffer;
 BITMAP __sprite = {.width = SPRITE_W, .height = SPRITE_H, .data = sprites[0]};
 BITMAP *sprite = &__sprite;
 
-BITMAP __sprite2 = {.width = SPRITE_W, .height = SPRITE_H, .data = sprites[1]};
+BITMAP __sprite2 = {.width = SPRITE_W, .height = SPRITE_H, .data = sprites[1], .transparent = '2'};
 BITMAP *sprite2 = &__sprite2;
 
 //private function
-void transcopy(register uint8_t *dest, register uint8_t *src, register uint32_t len, register uint8_t skipvalue){
-    while (len--){
+void transcopy(register uint8_t *dest, register uint8_t *src, register uint32_t len, register uint8_t skipvalue) {
+    while (len--) {
         if (*src != skipvalue)
             *dest = *src;
         dest++;
@@ -106,6 +107,10 @@ void vsync() {
 
 }
 
+uint8_t get_trans(BITMAP *bmp) {
+    return bmp->transparent;
+}
+
 
 void blit(BITMAP *dest, BITMAP *src, int dest_x, int dest_y) {
     blit_ex(dest, src, dest_x, dest_y, 0, 0, src->width, src->height);
@@ -118,8 +123,8 @@ void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int s
         height > src->height ||
         src_x < 0 ||
         src_y < 0 ||
-        src_x >= width ||
-        src_y >= height ||
+        src_x >= src->width ||
+        src_y >= src->height ||
         dest_x + width <= 0 ||
         dest_y + height <= 0 ||
         dest->width - dest_x <= 0 ||
@@ -127,30 +132,29 @@ void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int s
         return;
 
 
-    int destsize = dest->width * dest->height;
-
+    //src is drawn partially outside left of dest, must adjust
     if (dest_x + src_x < 0) {
         src_x += INT_ABS(dest_x);
         width -= INT_ABS(dest_x);
+        dest_x = 0;
+    }
+    else if (dest_x + width > dest->width) {
+        width = dest->width - dest_x;
     }
 
-    if (dest_x + width >= dest->width)
-        width = dest->width - dest_x;
-
+    int dest_size = dest->width * dest->height;
     int src_offset = src_x + src->width * src_y;
 
     for (int row = 0; row < height; row++) {
         int dest_offset = dest_x + dest->width * (row + dest_y);
         if (dest_offset < 0)
             continue;
-        if (dest_offset >= destsize)
+        if (dest_offset >= dest_size)
             break;
 
-        transcopy(dest->data + dest_offset, src->data + src_offset, width, src->transparent);
+        transcopy(dest->data + dest_offset, src->data + src_offset + src->width * row, width, src->transparent);
     }
 }
-
-
 
 
 void cleartocolor(BITMAP *dest, uint8_t color) {
@@ -159,6 +163,8 @@ void cleartocolor(BITMAP *dest, uint8_t color) {
 
 
 inline void putpixel(BITMAP *dest, int x, int y, uint8_t color) {
+    if (x < 0 || y < 0 || x >= dest->width || y >= dest->height)
+        return;
     //try shifts ie y << 8 + y << 6      320y = 256y + 64y,
     uint8_t *pixel = dest->data + y * dest->width + x;
     *pixel = color;
@@ -166,6 +172,10 @@ inline void putpixel(BITMAP *dest, int x, int y, uint8_t color) {
 
 
 void drawline(BITMAP *dest, int x0, int y0, int x1, int y1, uint8_t color) {
+    CLAMP(x0, 0, dest->width);
+    CLAMP(y0, 0, dest->height);
+    CLAMP(x1, 0, dest->width);
+    CLAMP(y1, 0, dest->height);
 
     int swapped = 0;
     if (x0 > x1) {//steep points into left to right order
