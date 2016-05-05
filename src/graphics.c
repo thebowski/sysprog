@@ -12,38 +12,62 @@
 
 uint8_t backbufferdata[VGA_SIZE];
 
-#define NUM_SPRITES 1
+#define NUM_SPRITES 2
 #define SPRITE_W 20
 #define SPRITE_H 20
 
 uint8_t sprites[NUM_SPRITES][SPRITE_W * SPRITE_H] =
         {{
-          "ZZZZZZZZZZZZZZZZZZZZ"
-          "ZaaaZZZaaaaZZZaaaaaZ"
-          "ZaaaaaaaaaaaZZZaaaaZ"
-          "ZaaaaaaaaaaaZZZaaaaZ"
-          "ZaaaaaaaaaaZZZaaaaaZ"
-          "ZaaaaaaaaaZZZaaaaaaZ"
-          "ZaaaaaaaaaaZZZaaaaaZ"
-          "ZaaaaaaaaaZZZaaaaaaZ"
-          "ZaaaaaaaZZZZaaaaaaaZ"
-          "ZaaaaaZZZZZZZZZZZaaZ"
-          "ZaZZZZZZZZZZZZZZZZaZ"
-          "ZaaaaaaaaaZaaaaaaaaZ"
-          "ZaaZaaaaaaaaZaaaaaaZ"
-          "ZaaaaaaaaaaaaaZaaaaZ"
-          "ZaaaZaaaaaaaaaaZaaaZ"
-          "ZaaaaaaaaaaaZaaaaaaZ"
-          "ZaaaaaaaaaaaaaaaaaaZ"
-          "ZZaaaaaaaaaaaaaaaaaZ"
-          "ZaaaaaaaaaaaaaaaaaaZ"
-          "ZZZZZZZZZZZZZZZZZZZ"
+                 "ZZZZZZZZZZZZZZZZZZZZ"
+                         "ZaaaZZZaaaaZZZaaaaaZ"
+                         "ZaaaaaaaaaaaZZZaaaaZ"
+                         "ZaaaaaaaaaaaZZZaaaaZ"
+                         "ZaaaaaaaaaaZZZaaaaaZ"
+                         "ZaaaaaaaaaZZZaaaaaaZ"
+                         "ZaaaaaaaaaaZZZaaaaaZ"
+                         "ZaaaaaaaaaZZZaaaaaaZ"
+                         "ZaaaaaaaZZZZaaaaaaaZ"
+                         "ZaaaaaZZZZZZZZZZZaaZ"
+                         "ZaZZZZZZZZZZZZZZZZaZ"
+                         "ZaaaaaaaaaZaaaaaaaaZ"
+                         "ZaaZaaaaaaaaZaaaaaaZ"
+                         "ZaaaaaaaaaaaaaZaaaaZ"
+                         "ZaaaZaaaaaaaaaaZaaaZ"
+                         "ZaaaaaaaaaaaZaaaaaaZ"
+                         "ZaaaaaaaaaaaaaaaaaaZ"
+                         "ZZaaaaaaaaaaaaaaaaaZ"
+                         "ZaaaaaaaaaaaaaaaaaaZ"
+                         "ZZZZZZZZZZZZZZZZZZZZ"
+         },
+         {
+                 "|333333333333333333|"
+                         "|aaaZZZaaaaZZZaaaaa|"
+                         "|333333333333333333|"
+                         "|aaaaaaaaaaaZZZaaaa|"
+                         "|333333333333333333v"
+                         "|aaaaaaaaaZZZaaaaaa|"
+                         "|333333333333333333v"
+                         "|aaaaaaaaaZZZaaaaaav"
+                         "|333333333333333333|"
+                         "|aaaaaZZZZZZZZZZZaa|"
+                         "|aZZZZZZZZZZZZZZZZa|"
+                         "||||||||||||||||||||"
+                         "||||||||||||||||||||"
+                         "||||||||||||||||||||"
+                         "||||||||||||||||||||"
+                         "||||||||||||||||||||"
+                         "||||||||||||||||||||"
+                         "||||||||||||||||||||"
+                         "||||||||||||||||||||"
+                         "||||||||||||||||||||"
          }};
 
 struct BITMAP {
     int width;
     int height;
+    uint8_t transparent; //color which is substituted as transparency
     uint8_t *data;
+
     //size == width * height
 };
 
@@ -58,8 +82,18 @@ BITMAP *backbuffer = &__backbuffer;
 BITMAP __sprite = {.width = SPRITE_W, .height = SPRITE_H, .data = sprites[0]};
 BITMAP *sprite = &__sprite;
 
+BITMAP __sprite2 = {.width = SPRITE_W, .height = SPRITE_H, .data = sprites[1]};
+BITMAP *sprite2 = &__sprite2;
 
-
+//private function
+void transcopy(register uint8_t *dest, register uint8_t *src, register uint32_t len, register uint8_t skipvalue){
+    while (len--){
+        if (*src != skipvalue)
+            *dest = *src;
+        dest++;
+        src++;
+    }
+}
 
 void vsync() {
     /* wait until any previous retrace has ended */
@@ -74,85 +108,60 @@ void vsync() {
 
 
 void blit(BITMAP *dest, BITMAP *src, int dest_x, int dest_y) {
-    if (dest_x + src->width <= 0 ||
-        dest_y + src->height <= 0 ||
+    blit_ex(dest, src, dest_x, dest_y, 0, 0, src->width, src->height);
+}
+
+void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int src_y, int width, int height) {
+    if (width <= 0 ||
+        height <= 0 ||
+        width > src->width ||
+        height > src->height ||
+        src_x < 0 ||
+        src_y < 0 ||
+        src_x >= width ||
+        src_y >= height ||
+        dest_x + width <= 0 ||
+        dest_y + height <= 0 ||
         dest->width - dest_x <= 0 ||
         dest->height - dest_y <= 0)
         return;
 
-    int destlength = dest->width * dest->height;
-    int srcwidthtocopy = src->width;
-    int srcstartx = 0;
-    //cut off pixels that pass right size of destination
-    //in this case simply stop copying pixels once they are outside of dest
-    if (src->width >= dest->width - dest_x)
-        srcwidthtocopy = dest->width - dest_x;
-    //cut off pixels that pass left size of destination
-    //in this case we need to start copying from the middle of src
-    if (dest_x < 0){
-        srcstartx = INT_ABS(dest_x); //location of first pixel overlap inside dest
-        srcwidthtocopy = src->width - srcstartx; //copy from srcstartx to end
-        dest_x = 0; //must be set to 0 so pixels will not be copied outside of dest
+
+    int destsize = dest->width * dest->height;
+
+    if (dest_x + src_x < 0) {
+        src_x += INT_ABS(dest_x);
+        width -= INT_ABS(dest_x);
     }
 
-    //copy rows of src into dest
-    for (int row = 0; row < src->height; row++) {
-        int offset = dest_x + dest->width * (row + dest_y);
-        if (offset < 0)
+    if (dest_x + width >= dest->width)
+        width = dest->width - dest_x;
+
+    int src_offset = src_x + src->width * src_y;
+
+    for (int row = 0; row < height; row++) {
+        int dest_offset = dest_x + dest->width * (row + dest_y);
+        if (dest_offset < 0)
             continue;
-        if (offset > destlength)
+        if (dest_offset >= destsize)
             break;
 
-        _kmemcpy(dest->data + offset, src->data + srcstartx + row * src->width, srcwidthtocopy);
+        transcopy(dest->data + dest_offset, src->data + src_offset, width, src->transparent);
     }
 }
 
+
+
+
 void cleartocolor(BITMAP *dest, uint8_t color) {
-//    uint32_t colorblock = ((uint32_t) color & 0xFF) << 24
-//                          | ((uint32_t) color & 0xFF) << 16
-//                          | ((uint32_t) color & 0xFF) << 8
-//                          | (color & 0xFF);
-//    for (int p = VGA_START; p < VGA_END; p += sizeof(int)) {
-//        *(int *) p = colorblock;
-//    }
-
     _kmemset(dest->data, dest->width * dest->height, color);
-
-
 }
 
 
 inline void putpixel(BITMAP *dest, int x, int y, uint8_t color) {
-
-
     //try shifts ie y << 8 + y << 6      320y = 256y + 64y,
     uint8_t *pixel = dest->data + y * dest->width + x;
-
     *pixel = color;
-    /*
-    if (x > resx)
-        x = 300;
-    else if (x < 0)
-        x = 0;
-
-    if (y > resy)
-        y = resy;
-    else if (y < 0)
-        y = 0;
-        */
-
-    /*__asm__("movl	$0x0A0000,%edi\n\t"
-        "movb	$0x0F,%al\n\t"
-        "movb	%al,(%edi)\n\t");*/
-    /*
-__asm__("movl	%0,%%edi;"
-"movb	%1,%%al;"
-"movb	%%al,(%%edi);"
-     :
-     :"r"(pixel), "r"(color)
-     :"%edi"
-     );
-*/
 }
 
 
