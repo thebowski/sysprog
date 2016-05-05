@@ -7,13 +7,27 @@
 #define SCREEN_H 200
 #define VGA_SIZE (SCREEN_W * SCREEN_H)
 
+#define VGA_PORT_PALETTE_INDEX 0x3C8
+#define VGA_PORT_PALETTE_COLOR 0x3C9
+
+
+typedef struct PALETTE PALETTE;
 typedef struct BITMAP BITMAP;
 
-extern BITMAP *screen;
-extern BITMAP *backbuffer;
 
-extern BITMAP *sprite;
-extern BITMAP *sprite2;
+BITMAP *screensub1;
+BITMAP *screensub2;
+BITMAP *screensub3;
+BITMAP *screensub4;
+BITMAP *screen;
+BITMAP *backbuffer;
+
+BITMAP *sprite;
+BITMAP *sprite2;
+
+BITMAP *imatt;
+
+PALETTE *greyscale;
 
 
 //checkout klibc for blit and clearscreen ect
@@ -44,6 +58,11 @@ void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int s
 
 void vsync(void);
 
+void loadpalette(PALETTE *palette);
+void randompalette(PALETTE *palette);
+
 uint8_t get_trans(BITMAP *bmp);
+
+void graphics_init(void);
 
 #endif
