@@ -16,8 +16,6 @@
 
 #include "graphics.h"
 
-#include "klib.h"
-
 /*
 ** USER PROCESSES
 **
@@ -121,7 +119,8 @@ int32_t user_z(void);
 int32_t user_a(void) {
 
     int x = 0, y = 0, dir = 0;
-    int sx = 0, sy = 0;
+    int sx = 0, sy = 0, sy2=0;
+    float sx2 = 0;
     int xdir = 1, ydir = 1;
 
     char color2 = 0;
@@ -170,16 +169,18 @@ int32_t user_a(void) {
             ydir = 1;
         }
 
-
-        if (sx > 350 || sx < -50 || sy > 250 || sy < -50){
-            cleartocolor(screen, 100);
-            vsync();
-            vsync();
-            vsync();
-            _kpanic("", NULL);
+        sx2 += .5;
+        if (sx2 > 320){
+            sx2 = -20;
+            sy2 += 20;
+        }
+        if (sy2 > 200){
+            sy2 = 0;
         }
 
         blit(backbuffer, sprite, sx, sy);
+
+        blit(backbuffer, sprite2, (int)sx2, sy2);
 
         //180?
 

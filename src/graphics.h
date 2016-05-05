@@ -13,6 +13,7 @@ extern BITMAP *screen;
 extern BITMAP *backbuffer;
 
 extern BITMAP *sprite;
+extern BITMAP *sprite2;
 
 
 //checkout klibc for blit and clearscreen ect
@@ -37,6 +38,8 @@ void cleartocolor(BITMAP *dest, uint8_t color);
 void drawline(BITMAP *dest, int x0, int y0, int x1, int y1, uint8_t color);
 
 void blit(BITMAP *dest, BITMAP *src, int dest_x, int dest_y);
+
+void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int src_y, int width, int height);
 
 void vsync(void);
 
