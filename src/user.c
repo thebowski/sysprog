@@ -118,6 +118,8 @@ int32_t user_z(void);
 
 int32_t user_a(void) {
 
+    graphics_init();
+
     int x = 0, y = 0, dir = 0;
     int sx = 0, sy = 0, sy2=0;
     float sx2 = 0;
@@ -142,9 +144,16 @@ int32_t user_a(void) {
         delay++;
 
         char color = 0;
-        for (int y = 0; y < 240; y += 16) {
-            for (int x = 0; x < 320; x += 16) {
-                putpixel(backbuffer, x, y, color++);
+        for (int j = 0; j < 240; j += 16) {
+            for (int i = 0; i < 320; i += 16) {
+                putpixel(backbuffer, i, j, color++);
+            }
+
+        }
+
+        for (int j = 0; j < 16; j++) {
+            for (int i = 0; i < 16; i++) {
+                putpixel(backbuffer, 300 + i, 41 + j, i + j * 16);
             }
 
         }
@@ -176,6 +185,8 @@ int32_t user_a(void) {
         if (sy2 > 200){
             sy2 = 0;
         }
+
+        blit(backbuffer, imatt, 60, 60);
 
         drawline(backbuffer, 160, 90, x, y, color2++);
         drawline(backbuffer, sx, sy, (int)sx2, sy2, color2);
@@ -219,9 +230,14 @@ int32_t user_a(void) {
         drawline(backbuffer, 280, 0, 280, 40, 0);
         drawline(backbuffer, 280, 40, 320, 40, 0);
 
+        blit(backbuffer, imatt, 60, 60);
+
 
         vsync();
         blit(screen, backbuffer, 0, 0);
+        //blit(screen, screensub3, 165, 5);
+        //blit(screen, screensub4, 5, 95);
+       // blit(screen, screensub1, 165, 95);
     }
 
 }
