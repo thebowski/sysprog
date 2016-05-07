@@ -32,8 +32,10 @@
 #define	SYS_getpid	8
 #define	SYS_getppid	9
 #define	SYS_gettime	10
+#define SYS_getgfxcontext 11
+#define SYS_drawscreen 12
 
-#define	N_SYSCALLS	11
+#define	N_SYSCALLS	13
 
 // dummy system call code to test the syscall ISR
 
