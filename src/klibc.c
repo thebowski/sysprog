@@ -5,7 +5,7 @@
 **
 ** Author:	CSCI-452 class of 20155
 **
-** Contributor:
+** Contributor: Matthew Cheman mnc3139
 **
 ** Description:	C implementations of kernel library functions
 */
@@ -13,6 +13,7 @@
 #define	__SP_KERNEL__
 
 #include "common.h"
+#include "kgraphics.h"
 
 /*
 ** PRIVATE DEFINITIONS
@@ -52,6 +53,20 @@ void _put_char_or_code( int ch ) {
 	} else {
 		c_printf( "\\x%02x", ch );
 	}
+}
+
+/*
+** _khandlekey( char code )
+**
+** Process keypresses for special use by the kernel. If the code was used, returns 1 else 0
+*/
+
+int _khandlekey( char code ){
+	if (code == '\t'){
+		_kgfx_next_context();
+		return 1;
+	}
+	return 0;
 }
 
 /*

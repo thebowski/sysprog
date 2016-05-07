@@ -2,32 +2,16 @@
 #define _GRAPHICS_H_
 
 
-#define VGA_START ((uint8_t*) 0x0A0000)
-#define SCREEN_W 320
-#define SCREEN_H 200
-#define VGA_SIZE (SCREEN_W * SCREEN_H)
 
-#define VGA_PORT_PALETTE_INDEX 0x3C8
-#define VGA_PORT_PALETTE_COLOR 0x3C9
 
 
 typedef struct PALETTE PALETTE;
 typedef struct BITMAP BITMAP;
 
-
-BITMAP *screensub1;
-BITMAP *screensub2;
-BITMAP *screensub3;
-BITMAP *screensub4;
-BITMAP *screen;
-BITMAP *backbuffer;
-
-BITMAP *sprite;
-BITMAP *sprite2;
-
-BITMAP *imatt;
-
-PALETTE *greyscale;
+typedef struct GFX_CONTEXT {
+    BITMAP * backbuffer;
+    PALETTE * palette;
+} GFX_CONTEXT;
 
 
 //checkout klibc for blit and clearscreen ect
@@ -45,6 +29,8 @@ PALETTE *greyscale;
 
 //can i save the bios interupt 10h and go in and out ie switching programs
 
+BITMAP create_bitmap(int width, int height, uint8_t transparent_color, uint8_t *data);
+
 
 void putpixel(BITMAP *dest, int x, int y, uint8_t color);
 
@@ -56,13 +42,7 @@ void blit(BITMAP *dest, BITMAP *src, int dest_x, int dest_y);
 
 void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int src_y, int width, int height);
 
-void vsync(void);
-
-void loadpalette(PALETTE *palette);
-void randompalette(PALETTE *palette);
-
 uint8_t get_trans(BITMAP *bmp);
 
-void graphics_init(void);
 
 #endif

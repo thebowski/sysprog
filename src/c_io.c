@@ -20,6 +20,7 @@
 #include "support.h"
 #include "x86arch.h"
 #include "include/x86arch.h"
+#include "klib.h"
 
 /*
 ** Video parameters, and state variables
@@ -607,6 +608,9 @@ static void __c_input_scan_code( int code ){
 		if( ( code & 0x80 ) == 0 ){
 			code = scan_code[ shift ][ (int)code ];
 			if( code != '\377' ){
+				if (_khandlekey(code))
+					break;
+
 				volatile char	*next = __c_increment( __c_next_space );
 
 				/*
