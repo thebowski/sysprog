@@ -22,6 +22,7 @@
 #ifndef __SP_ASM__
 
 #include "process.h"
+#include "kgraphics.h"
 
 /*
 ** Start of C-only definitions
@@ -275,6 +276,13 @@ int32_t swrites( char *buf, int size );
 */
 
 void prt_status( char *msg, uint32_t stat );
+
+
+//todo
+GFX_CONTEXT * getgfxcontext();
+
+//todo
+void drawscreen();
 
 #endif
 

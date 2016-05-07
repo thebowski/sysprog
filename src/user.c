@@ -166,7 +166,6 @@ uint8_t sprites[2][SPRITE_W * SPRITE_H] =
          }};
 
 #include "images.h"
-#include "kgraphics.h"
 
 int32_t user_a(void) {
 
@@ -176,7 +175,7 @@ int32_t user_a(void) {
 
     BITMAP imatt = create_bitmap(100, 100, 0, image_matt);
 
-    GFX_CONTEXT *ctx = _kgfx_new_context(getpid());
+    GFX_CONTEXT *ctx = getgfxcontext();
 
     int x = 0, y = 0, dir = 0;
     int sx = 0, sy = 0, sy2=0;
@@ -289,14 +288,14 @@ int32_t user_a(void) {
         drawline(ctx->backbuffer, 280, 40, 320, 40, 0);
 
 
-        _kgfx_draw_screen(getpid());
+        drawscreen();
     }
 
 }
 
 int32_t user_b(void) {
 
-    GFX_CONTEXT *ctx = _kgfx_new_context(getpid());
+    GFX_CONTEXT *ctx = getgfxcontext();
 
 
 int color = 0;
@@ -304,7 +303,7 @@ int color = 0;
     {
 
         cleartocolor(ctx->backbuffer, color++);
-        _kgfx_draw_screen(getpid());
+        drawscreen();
     }
 
 
@@ -347,7 +346,7 @@ int color = 0;
 int32_t user_c(void) {
 
 
-    GFX_CONTEXT *ctx = _kgfx_new_context(getpid());
+    GFX_CONTEXT *ctx = getgfxcontext();
 
 
     while (1)
@@ -372,7 +371,7 @@ int32_t user_c(void) {
         }
 
 
-        _kgfx_draw_screen(getpid());
+        drawscreen();
     }
 
 

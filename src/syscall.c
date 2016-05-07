@@ -25,6 +25,7 @@
 #include "stack.h"
 #include "clock.h"
 #include "sio.h"
+#include "kgraphics.h"
 
 /*
 ** PRIVATE DEFINITIONS
@@ -633,6 +634,17 @@ void _sys_kill( pcb_t *pcb ) {
 	}
 }
 
+GFX_CONTEXT * _sys_getgfxcontext( pcb_t *pcb ){
+
+	//todo bulletproof
+	RET(pcb) = _kgfx_new_context(pcb->pid);
+}
+void _sys_drawscreen( pcb_t *pcb ){
+
+	//todo bulletproof
+	_kgfx_draw_screen(pcb->pid);
+}
+
 /*
 ** PUBLIC FUNCTIONS
 */
@@ -663,6 +675,8 @@ void _sys_init( void ) {
 	_syscalls[ SYS_getpid ]		= _sys_getpid;
 	_syscalls[ SYS_getppid ]	= _sys_getppid;
 	_syscalls[ SYS_gettime ]	= _sys_gettime;
+	_syscalls[ SYS_getgfxcontext ]	= _sys_getgfxcontext;
+	_syscalls[ SYS_drawscreen ]	= _sys_drawscreen;
 
 	// initialize the zombie and waiting queues
 
