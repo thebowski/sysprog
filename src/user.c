@@ -176,9 +176,7 @@ int32_t user_a(void) {
 
     BITMAP imatt = create_bitmap(100, 100, 0, image_matt);
 
-    GFX_CONTEXT *ctx = _kgfx_new_context(1);
-    cleartocolor(ctx->backbuffer, 230);
-    _kgfx_draw_screen(1);
+    GFX_CONTEXT *ctx = _kgfx_new_context(getpid());
 
     int x = 0, y = 0, dir = 0;
     int sx = 0, sy = 0, sy2=0;
@@ -291,12 +289,25 @@ int32_t user_a(void) {
         drawline(ctx->backbuffer, 280, 40, 320, 40, 0);
 
 
-        _kgfx_draw_screen(1);
+        _kgfx_draw_screen(getpid());
     }
 
 }
 
 int32_t user_b(void) {
+
+    GFX_CONTEXT *ctx = _kgfx_new_context(getpid());
+
+
+int color = 0;
+    while (1)
+    {
+
+        cleartocolor(ctx->backbuffer, color++);
+        _kgfx_draw_screen(getpid());
+    }
+
+
     int i, j;
     int32_t status;
     char buf[12];
@@ -334,6 +345,37 @@ int32_t user_b(void) {
 }
 
 int32_t user_c(void) {
+
+
+    GFX_CONTEXT *ctx = _kgfx_new_context(getpid());
+
+
+    while (1)
+    {
+
+        cleartocolor(ctx->backbuffer, 16);
+
+
+        char color = 0;
+        for (int j = 0; j < 240; j += 16) {
+            for (int i = 0; i < 320; i += 16) {
+                putpixel(ctx->backbuffer, i, j, color++);
+            }
+
+        }
+
+        for (int j = 0; j < 16; j++) {
+            for (int i = 0; i < 16; i++) {
+                putpixel(ctx->backbuffer, 10 + i, 10 + j, i + j * 16);
+            }
+
+        }
+
+
+        _kgfx_draw_screen(getpid());
+    }
+
+
     int i, j;
     int32_t status;
     char buf[12];
