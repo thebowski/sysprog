@@ -65,7 +65,7 @@ void _kgfx_init(void){
     num_contexts = 0;
 
     //create screen
-    screen = create_bitmap(SCREEN_W, SCREEN_H, 0, VGA_START);
+    screen = create_bitmap(SCREEN_W, SCREEN_H, -1, VGA_START);
 
     cleartocolor(&screen, 5*16 + 8);
     //vsync();
@@ -125,7 +125,7 @@ void _kgfx_delete_context(int pid){
         if (context_pid[i] == pid) {
             contexts[i].backbuffer = &backbuffers[i];
             contexts[i].palette = &palettes[i];
-            backbuffers[i] = create_bitmap(SCREEN_W, SCREEN_H, 0, data_backbuffers[i]);
+            backbuffers[i] = create_bitmap(SCREEN_W, SCREEN_H, -1, data_backbuffers[i]);
             context_pid[i] = 0;
             num_contexts--;
         }

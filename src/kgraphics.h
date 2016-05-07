@@ -40,7 +40,7 @@
 struct BITMAP {
     int width;
     int height;
-    uint8_t transparent; //color which is substituted as transparency
+    int transparent; //color which is substituted as transparency, -1 for no transparency
     int sub_x;
     int sub_y;
     int sub_w; //should be initialized to width
