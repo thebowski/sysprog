@@ -417,6 +417,21 @@ int32_t user_c(void) {
 */
 
 int32_t user_d(void) {
+
+
+    GFX_CONTEXT *ctx = getgfxcontext();
+
+    BITMAP jupiter = create_bitmap(320,200,-1,jupiter_image);
+    ctx->palette = &jupiter_palette;
+
+    blit(ctx->backbuffer, &jupiter, 0,0);
+    while (1)
+    {
+
+
+        drawscreen();
+    }
+
     int pid;
 
     swrites("D", 1);

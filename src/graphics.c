@@ -109,7 +109,12 @@ void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int s
         if (dest_offset >= dest_size)
             break;
 
-        transcopy(dest->data + dest_offset, src->data + src_offset + src->width * row, width, src->transparent);
+        int *d = dest->data + dest_offset;
+        int *s = src->data + src_offset + src->width * row;
+        if (src->transparent == -1) //no transparency
+            _kmemcpy(d, s, width);
+        else
+            transcopy(d, s, width, src->transparent);
     }
 }
 
