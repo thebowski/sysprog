@@ -55,6 +55,14 @@ uint32_t _get_ebp( void );
 void _put_char_or_code( int ch );
 
 /*
+** _khandlekey( char code )
+**
+** Process keypresses for special use by the kernel. If the code was used, returns 1 else 0
+*/
+
+int _khandlekey( char code );
+
+/*
 ** _kmemset - initialize all bytes of a block of memory to a specific value
 **
 ** usage:  _kmemclr( buffer, length, value )

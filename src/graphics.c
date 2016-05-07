@@ -1,5 +1,6 @@
 #include "common.h"
 
+#include "kgraphics.h"
 #include "graphics.h"
 
 #include "startup.h"
@@ -7,99 +8,9 @@
 
 #include "klib.h"
 
-#include "images.h"
-
 #define INT_ABS(a) (((a) < 0) ? -(a): (a))
 #define CLAMP(a, min, max)  ((a) < (min)) ? (min) : (((a) >= (max)) ? (max) : (a))
 #define MIN(a, b) ((a) - (b) < 0 ? (b) : (a))
-
-#define NUM_BITMAPS 9
-#define NUM_PALETTES 2
-
-#define NUM_SPRITES 2
-#define SPRITE_W 20
-#define SPRITE_H 20
-
-
-struct BITMAP {
-    int width;
-    int height;
-    uint8_t transparent; //color which is substituted as transparency
-    int sub_x;
-    int sub_y;
-    int sub_w; //should be initialized to width
-    int sub_h;
-
-    uint8_t *data;
-};
-
-typedef struct COLOR {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-} COLOR;
-
-struct PALETTE {
-    COLOR data[256];
-};
-
-
-uint8_t backbufferdata[VGA_SIZE];
-BITMAP bitmaps[NUM_BITMAPS];
-PALETTE palette[NUM_PALETTES];
-
-
-uint8_t sprites[NUM_SPRITES][SPRITE_W * SPRITE_H] =
-        {{
-                 "ZZZZZZZZZZZZZZZZZZZZ"
-                         "ZaaaZZZaaaaZZZaaaaaZ"
-                         "ZaaaaaaaaaaaZZZaaaaZ"
-                         "ZaaaaaaaaaaaZZZaaaaZ"
-                         "ZaaaaaaaaaaZZZaaaaaZ"
-                         "ZaaaaaaaaaZZZaaaaaaZ"
-                         "ZaaaaaaaaaaZZZaaaaaZ"
-                         "ZaaaaaaaaaZZZaaaaaaZ"
-                         "ZaaaaaaaZZZZaaaaaaaZ"
-                         "ZaaaaaZZZZZZZZZZZaaZ"
-                         "ZaZZZZZZZZZZZZZZZZaZ"
-                         "ZaaaaaaaaaZaaaaaaaaZ"
-                         "ZaaZaaaaaaaaZaaaaaaZ"
-                         "ZaaaaaaaaaaaaaZaaaaZ"
-                         "ZaaaZaaaaaaaaaaZaaaZ"
-                         "ZaaaaaaaaaaaZaaaaaaZ"
-                         "ZaaaaaaaaaaaaaaaaaaZ"
-                         "ZZaaaaaaaaaaaaaaaaaZ"
-                         "ZaaaaaaaaaaaaaaaaaaZ"
-                         "ZZZZZZZZZZZZZZZZZZZZ"
-         },
-         {
-                 "|333333333333333333|"
-                         "|aaaZZZaaaaZZZaaaaa|"
-                         "|333333333333333333|"
-                         "|aaaaaaaaaaaZZZaaaa|"
-                         "|333333333333333333v"
-                         "|aaaaaaaaaZZZaaaaaa|"
-                         "|333333333333333333v"
-                         "|aaaaaaaaaZZZaaaaaav"
-                         "|333333333333333333|"
-                         "|aaaaaZZZZZZZZZZZaa|"
-                         "|aZZZZZZZZZZZZZZZZa|"
-                         "||||||22222222||||||"
-                         "||||||2222222222||||"
-                         "||||||22222222||||||"
-                         "||||||22222222||||||"
-                         "||||||22222222||||||"
-                         "||||||22222222||||||"
-                         "||||||22222222||||||"
-                         "||||||||||||||||||||"
-                         "||||||||||||||||||||"
-         }};
-
-
-
-
-
-//private function
 
 
 //copies data but skips overwriting 'transparent' values
@@ -109,23 +20,6 @@ void transcopy(register uint8_t *dest, register uint8_t *src, register uint32_t 
             *dest = *src;
         dest++;
         src++;
-    }
-}
-
-
-void loadpalette(PALETTE *palette){
-    __outb(VGA_PORT_PALETTE_INDEX, 0); //0 for set all palette colors
-    for (int i = 0; i < 256; i++){
-        __outb(VGA_PORT_PALETTE_COLOR, palette->data[i].r);
-        __outb(VGA_PORT_PALETTE_COLOR, palette->data[i].g);
-        __outb(VGA_PORT_PALETTE_COLOR, palette->data[i].b);
-    }
-}
-void randompalette(PALETTE *palette){
-    for (int i = 0; i < 256; i++){
-        palette->data[i].r = i;
-        palette->data[i].g = i;
-        palette->data[i].b = i;
     }
 }
 
@@ -142,87 +36,33 @@ BITMAP create_bitmap(int width, int height, uint8_t transparent_color, uint8_t *
     return a;
 }
 
-BITMAP create_subbitmap(BITMAP * src, int x, int y, int width, int height){
-    if (x < 0 ||
-        y < 0 ||
-        width < 0 ||
-        height < 0 ||
-        x + width > src->width ||
-        y + height > src->height
-            )
-    {
-        vsync();
-        cleartocolor(screen, 10);
-        vsync();
-        vsync();
 
-        _kpanic("create_subbitmap", "subbitmap larger than parent");
-    }
-
-
-    BITMAP a = *src;
-    a.sub_x = x;
-    a.sub_y = y;
-    a.sub_w = width;
-    a.sub_h = height;
-
-    return a;
-}
-
-
-
-void graphics_init(void){
-    screen = &bitmaps[0];
-    backbuffer = &bitmaps[1];
-    sprite = &bitmaps[2];
-    sprite2 = &bitmaps[3];
-    screensub1 = &bitmaps[4];
-    screensub2 = &bitmaps[5];
-    screensub3 = &bitmaps[6];
-    screensub4 = &bitmaps[7];
-    imatt = &bitmaps[8];
-
-    bitmaps[0] = create_bitmap(SCREEN_W, SCREEN_H, 0, VGA_START);
-    bitmaps[1] = create_bitmap(SCREEN_W, SCREEN_H, 0, backbufferdata);
-    bitmaps[2] = create_bitmap(SPRITE_W, SPRITE_H, 0, sprites[0]);
-    bitmaps[3] = create_bitmap(SPRITE_W, SPRITE_H, '2', sprites[1]);
-    bitmaps[4] = create_subbitmap(backbuffer, 5, 5, 150, 90);
-    bitmaps[5] = create_subbitmap(backbuffer, 165, 5, 150, 90);
-    bitmaps[6] = create_subbitmap(backbuffer, 5, 95, 150, 90);
-    bitmaps[7] = create_subbitmap(backbuffer, 165, 95, 150, 90);
-
-    bitmaps[8] = create_bitmap(100, 100, 0, &image_matt);
-
-
-    //greyscale palette
-    for (int i = 0; i < 256; i++){
-        palette[0].data[i].r = i;
-        palette[0].data[i].g = i;
-        palette[0].data[i].b = i;
-    }
-
-    //matt palette
-    for (int i = 0; i < 256; i++){
-        palette[1].data[i].r = palette_matt[i * 3];
-        palette[1].data[i].g = palette_matt[i * 3 + 1];
-        palette[1].data[i].b = palette_matt[i * 3 + 2];
-    }
-
-    greyscale = &palette[0];
-    //loadpalette(greyscale);
-    //loadpalette(&palette[1]);
-}
-
-void vsync() {
-    /* wait until any previous retrace has ended */
-    do {
-    } while (__inb(0x3DA) & 8);
-
-    /* wait until a new retrace has just begun */
-    do {
-    } while (!(__inb(0x3DA) & 8));
-
-}
+//BITMAP create_subbitmap(BITMAP * src, int x, int y, int width, int height){
+//    if (x < 0 ||
+//        y < 0 ||
+//        width < 0 ||
+//        height < 0 ||
+//        x + width > src->width ||
+//        y + height > src->height
+//            )
+//    {
+//        vsync();
+//        cleartocolor(screen, 10);
+//        vsync();
+//        vsync();
+//
+//        _kpanic("create_subbitmap", "subbitmap larger than parent");
+//    }
+//
+//
+//    BITMAP a = *src;
+//    a.sub_x = x;
+//    a.sub_y = y;
+//    a.sub_w = width;
+//    a.sub_h = height;
+//
+//    return a;
+//}
 
 uint8_t get_trans(BITMAP *bmp) {
     return bmp->transparent;

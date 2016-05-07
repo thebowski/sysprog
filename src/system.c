@@ -25,6 +25,8 @@
 // need init() and idle() addresses
 #include "user.h"
 
+#include "kgraphics.h"
+
 // need the exit() and do_exit() prototypes
 #include "ulib.h"
 
@@ -218,6 +220,8 @@ void _zombify( pcb_t *pcb, uint32_t status ) {
 
 void _init( void ) {
 	pcb_t *pcb;
+
+	_kgfx_init();
 
 	/*
 	** BOILERPLATE CODE - taken from basic framework

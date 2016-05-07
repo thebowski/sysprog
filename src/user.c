@@ -116,9 +116,69 @@ int32_t user_z(void);
 ** the status return from swrites().
 */
 
+#define SPRITE_W 20
+#define SPRITE_H 20
+
+uint8_t sprites[2][SPRITE_W * SPRITE_H] =
+        {{
+                 "ZZZZZZZZZZZZZZZZZZZZ"
+                         "ZaaaZZZaaaaZZZaaaaaZ"
+                         "ZaaaaaaaaaaaZZZaaaaZ"
+                         "ZaaaaaaaaaaaZZZaaaaZ"
+                         "ZaaaaaaaaaaZZZaaaaaZ"
+                         "ZaaaaaaaaaZZZaaaaaaZ"
+                         "ZaaaaaaaaaaZZZaaaaaZ"
+                         "ZaaaaaaaaaZZZaaaaaaZ"
+                         "ZaaaaaaaZZZZaaaaaaaZ"
+                         "ZaaaaaZZZZZZZZZZZaaZ"
+                         "ZaZZZZZZZZZZZZZZZZaZ"
+                         "ZaaaaaaaaaZaaaaaaaaZ"
+                         "ZaaZaaaaaaaaZaaaaaaZ"
+                         "ZaaaaaaaaaaaaaZaaaaZ"
+                         "ZaaaZaaaaaaaaaaZaaaZ"
+                         "ZaaaaaaaaaaaZaaaaaaZ"
+                         "ZaaaaaaaaaaaaaaaaaaZ"
+                         "ZZaaaaaaaaaaaaaaaaaZ"
+                         "ZaaaaaaaaaaaaaaaaaaZ"
+                         "ZZZZZZZZZZZZZZZZZZZZ"
+         },
+         {
+                 "|333333333333333333|"
+                         "|aaaZZZaaaaZZZaaaaa|"
+                         "|333333333333333333|"
+                         "|aaaaaaaaaaaZZZaaaa|"
+                         "|333333333333333333v"
+                         "|aaaaaaaaaZZZaaaaaa|"
+                         "|333333333333333333v"
+                         "|aaaaaaaaaZZZaaaaaav"
+                         "|333333333333333333|"
+                         "|aaaaaZZZZZZZZZZZaa|"
+                         "|aZZZZZZZZZZZZZZZZa|"
+                         "||||||22222222||||||"
+                         "||||||2222222222||||"
+                         "||||||22222222||||||"
+                         "||||||22222222||||||"
+                         "||||||22222222||||||"
+                         "||||||22222222||||||"
+                         "||||||22222222||||||"
+                         "||||||||||||||||||||"
+                         "||||||||||||||||||||"
+         }};
+
+#include "images.h"
+#include "kgraphics.h"
+
 int32_t user_a(void) {
 
-    graphics_init();
+    BITMAP sprite = create_bitmap(SPRITE_W, SPRITE_H, 0, sprites[0]);
+
+    BITMAP sprite2 = create_bitmap(SPRITE_W, SPRITE_H, '2', sprites[1]);
+
+    BITMAP imatt = create_bitmap(100, 100, 0, image_matt);
+
+    GFX_CONTEXT *ctx = _kgfx_new_context(1);
+    cleartocolor(ctx->backbuffer, 230);
+    _kgfx_draw_screen(1);
 
     int x = 0, y = 0, dir = 0;
     int sx = 0, sy = 0, sy2=0;
@@ -131,14 +191,14 @@ int32_t user_a(void) {
     while (1) {
 
 
-        cleartocolor(backbuffer, bgcolor);
+        cleartocolor(ctx->backbuffer, bgcolor);
 
 
         if (delay > 50) {
             bgcolor++;
 
             delay = 0;
-            if (bgcolor == get_trans(backbuffer))
+            if (bgcolor == get_trans(ctx->backbuffer))
                 delay = -1000;
         }
         delay++;
@@ -146,14 +206,14 @@ int32_t user_a(void) {
         char color = 0;
         for (int j = 0; j < 240; j += 16) {
             for (int i = 0; i < 320; i += 16) {
-                putpixel(backbuffer, i, j, color++);
+                putpixel(ctx->backbuffer, i, j, color++);
             }
 
         }
 
         for (int j = 0; j < 16; j++) {
             for (int i = 0; i < 16; i++) {
-                putpixel(backbuffer, 300 + i, 41 + j, i + j * 16);
+                putpixel(ctx->backbuffer, 300 + i, 41 + j, i + j * 16);
             }
 
         }
@@ -186,17 +246,17 @@ int32_t user_a(void) {
             sy2 = 0;
         }
 
-        blit(backbuffer, imatt, 60, 60);
+        blit(ctx->backbuffer, &imatt, 60, 60);
 
-        drawline(backbuffer, 160, 90, x, y, color2++);
-        drawline(backbuffer, sx, sy, (int)sx2, sy2, color2);
-        drawline(backbuffer, sx2, sy2, 320 - (int) sx2, 200 - sy2, 255 - color2);
+        drawline(ctx->backbuffer, 160, 90, x, y, color2++);
+        drawline(ctx->backbuffer, sx, sy, (int)sx2, sy2, color2);
+        drawline(ctx->backbuffer, sx2, sy2, 320 - (int) sx2, 200 - sy2, 255 - color2);
 
-        blit(backbuffer, sprite, sx, sy);
+        blit(ctx->backbuffer, &sprite, sx, sy);
 
-        blit(backbuffer, sprite2, (int)sx2, sy2);
+        blit(ctx->backbuffer, &sprite2, (int)sx2, sy2);
 
-        blit(backbuffer, sprite2, 320 - (int)sx2, 200 - sy2);
+        blit(ctx->backbuffer, &sprite2, 320 - (int)sx2, 200 - sy2);
 
         //180?
 
@@ -226,18 +286,12 @@ int32_t user_a(void) {
         }
 
 
-        blit_ex(backbuffer, backbuffer, 280, 0, 140, 80, 40, 40);
-        drawline(backbuffer, 280, 0, 280, 40, 0);
-        drawline(backbuffer, 280, 40, 320, 40, 0);
-
-        blit(backbuffer, imatt, 60, 60);
+        blit_ex(ctx->backbuffer, ctx->backbuffer, 280, 0, 140, 80, 40, 40);
+        drawline(ctx->backbuffer, 280, 0, 280, 40, 0);
+        drawline(ctx->backbuffer, 280, 40, 320, 40, 0);
 
 
-        vsync();
-        blit(screen, backbuffer, 0, 0);
-        //blit(screen, screensub3, 165, 5);
-        //blit(screen, screensub4, 5, 95);
-       // blit(screen, screensub1, 165, 95);
+        _kgfx_draw_screen(1);
     }
 
 }
