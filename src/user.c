@@ -173,9 +173,10 @@ int32_t user_a(void) {
 
     BITMAP sprite2 = create_bitmap(SPRITE_W, SPRITE_H, '2', sprites[1]);
 
-    BITMAP imatt = create_bitmap(100, 100, 0, image_matt);
+    BITMAP imatt = create_bitmap(100, 100, 255, image_matt);
 
     GFX_CONTEXT *ctx = getgfxcontext();
+    ctx->palette = &palette_matt;
 
     int x = 0, y = 0, dir = 0;
     int sx = 0, sy = 0, sy2=0;
