@@ -304,6 +304,8 @@ int color = 0;
     {
 
         cleartocolor(ctx->backbuffer, color++);
+        if (color > 253)
+            color = 0;
         drawscreen();
     }
 
