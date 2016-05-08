@@ -160,8 +160,7 @@ floppy:	floppy.image
 	dd if=floppy.image of=/dev/fd0
 
 usb:	usb.image
-	#/usr/local/dcs/bin/dcopy usb.image
-	dd if=usb.image of=/dev/sdg && sync
+	/usr/local/dcs/bin/dcopy usb.image
 
 #
 # Special rule for creating the modification and offset programs
