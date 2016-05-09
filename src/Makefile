@@ -55,7 +55,7 @@ USER_OPTIONS = -DDUMP_QUEUES -DCLEAR_BSS_SEGMENT -DISR_DEBUGGING_CODE -DSP_OS_CO
 #
 # We only want to include from the current directory and ~wrc/include
 #
-INCLUDES = -I. -I/home/matthew/programs/sysprog/src/include
+INCLUDES = -I. -Iinclude
 
 #
 # Compilation/assembly/linking commands and options
@@ -209,8 +209,8 @@ depend:
 
 startup.o: bootstrap.h
 isr_stubs.o: bootstrap.h
-c_io.o: c_io.h startup.h support.h /home/matthew/programs/sysprog/src/include
-support.o: startup.h support.h c_io.h /home/matthew/programs/sysprog/src/include
+c_io.o: c_io.h startup.h support.h include
+support.o: startup.h support.h c_io.h include
 support.o: bootstrap.h
 ulibs.o: syscall.h common.h
 ulibc.o: common.h ulib.h process.h stack.h queue.h
