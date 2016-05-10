@@ -63,6 +63,8 @@ struct PALETTE {
 ** Globals
 */
 
+BITMAP font;
+
 /*
 ** Prototypes
 */

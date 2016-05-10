@@ -16,6 +16,7 @@
 #include "klib.h"
 #include "kgraphics.h"
 #include "graphics.h"
+#include "images.h"
 
 /*
 ** PRIVATE DEFINITIONS
@@ -64,11 +65,14 @@ void _kgfx_init(void){
     _kgfx_delete_context(0); //delete all contexts
     num_contexts = 0;
 
-    //create screen
     screen = create_bitmap(SCREEN_W, SCREEN_H, -1, VGA_START);
+    font = create_bitmap(1024, 8, -1, font_data);
 
     cleartocolor(&screen, 5*16 + 8);
-    //vsync();
+    text(&screen, "Welcome", 160, 75, 1);
+    text(&screen, "to", 160, 85, 1);
+    text(&screen, "ChemanOS", 160, 95, 1);
+
 }
 
 int offset = 0;

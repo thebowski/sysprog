@@ -16,6 +16,8 @@
 
 #include "graphics.h"
 
+#include "images.h"
+
 /*
 ** USER PROCESSES
 **
@@ -165,7 +167,7 @@ uint8_t sprites[2][SPRITE_W * SPRITE_H] =
                          "||||||||||||||||||||"
          }};
 
-#include "images.h"
+
 
 int32_t user_a(void) {
 
@@ -288,7 +290,6 @@ int32_t user_a(void) {
         drawline(ctx->backbuffer, 280, 0, 280, 40, 0);
         drawline(ctx->backbuffer, 280, 40, 320, 40, 0);
 
-
         drawscreen();
     }
 
@@ -306,6 +307,7 @@ int color = 0;
         cleartocolor(ctx->backbuffer, color++);
         if (color > 253)
             color = 0;
+
         drawscreen();
     }
 
@@ -373,6 +375,7 @@ int32_t user_c(void) {
 
         }
 
+        text(ctx->backbuffer, "Suck it the World!", 100,100, 0);
 
         drawscreen();
     }

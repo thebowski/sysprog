@@ -44,5 +44,7 @@ void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int s
 
 uint8_t get_trans(BITMAP *bmp);
 
+void text(BITMAP * dest, char * str, int x, int y, int centered);
+
 
 #endif
