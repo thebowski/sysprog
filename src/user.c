@@ -169,19 +169,12 @@ uint8_t sprites[2][SPRITE_W * SPRITE_H] =
 
 
 
-int32_t user_a(void) {
-
-//    GFX_CONTEXT *ctx = getgfxcontext();
-//    cleartocolor(ctx->backbuffer, 200);
-//    //drawscreen();
-//
-//    return;
-
+int32_t user_d(void) {
     BITMAP sprite = create_bitmap(SPRITE_W, SPRITE_H, 0, sprites[0]);
 
     BITMAP sprite2 = create_bitmap(SPRITE_W, SPRITE_H, '2', sprites[1]);
 
-    BITMAP imatt = create_bitmap(100, 100, 255, image_matt);
+    BITMAP imatt = create_bitmap(100, 100, -1, image_matt);
 
     GFX_CONTEXT *ctx = getgfxcontext();
     ctx->palette = palette_matt;
@@ -223,6 +216,8 @@ int32_t user_a(void) {
             }
 
         }
+
+        text(ctx->backbuffer, "HEY THIS IS WORKING.",200,10, 1);
 
         sx += xdir;
         sy += ydir;
@@ -296,7 +291,7 @@ int32_t user_a(void) {
         drawline(ctx->backbuffer, 280, 0, 280, 40, 0);
         drawline(ctx->backbuffer, 280, 40, 320, 40, 0);
 
-        text(ctx->backbuffer, "HEY THIS IS WORKING.",200,10, 1);
+
 
         drawscreen();
     }
@@ -304,11 +299,6 @@ int32_t user_a(void) {
 }
 
 int32_t user_b(void) {
-//    GFX_CONTEXT *ctx = getgfxcontext();
-//    cleartocolor(ctx->backbuffer, 50);
-//    //drawscreen();
-//    return;
-
     GFX_CONTEXT *ctx = getgfxcontext();
 
 
@@ -325,11 +315,6 @@ int color = 0;
 }
 
 int32_t user_c(void) {
-//    GFX_CONTEXT *ctx = getgfxcontext();
-//    cleartocolor(ctx->backbuffer, 150);
-//    //drawscreen();
-//    return;
-
     GFX_CONTEXT *ctx = getgfxcontext();
 
 
@@ -342,18 +327,27 @@ int32_t user_c(void) {
         for (int j = 0; j < 240; j += 16) {
             for (int i = 0; i < 320; i += 16) {
                 putpixel(ctx->backbuffer, i, j, color++);
-            }
 
+            }
+            for (int a = 0; a < 200; a+= 2){
+                putpixel(ctx->backbuffer, 100, a, color);
+            }
+            for (int a = 0; a < 200; a+= 4){
+                putpixel(ctx->backbuffer, 101, a, color);
+            }
+            for (int a = 0; a < 200; a+= 8){
+                putpixel(ctx->backbuffer, 102, a, color);
+            }
         }
 
         for (int j = 0; j < 16; j++) {
             for (int i = 0; i < 16; i++) {
-                putpixel(ctx->backbuffer, 100 + i, 100 + j, i + j * 16);
+                putpixel(ctx->backbuffer, 40 + i, 40 + j, i + j * 16);
             }
 
         }
 
-        text(ctx->backbuffer, "Suck it the World!", 100, 100, 0);
+        text(ctx->backbuffer, "Hello World!", 100, 100, 0);
 
         drawscreen();
     }
@@ -363,7 +357,7 @@ int32_t user_c(void) {
 ** User D spawns user Z, then exits before it can terminate.
 */
 
-int32_t user_d(void) {
+int32_t user_e(void) {
 
 
     GFX_CONTEXT *ctx = getgfxcontext();
@@ -408,6 +402,8 @@ void draw_card(BITMAP *dest, int dest_x, int dest_y, int w, int h, uint8_t color
         putpixel(dest, dest_x + w + 1, y, shadow_color_light);
     }
     putpixel(dest, dest_x + w + 1, dest_y + h + 1, shadow_color_light);
+    putpixel(dest, dest_x + w, dest_y + 2, shadow_color_light);
+    putpixel(dest, dest_x + 2, dest_y + h, shadow_color_light);
 }
 
 /*
@@ -419,7 +415,7 @@ void draw_card(BITMAP *dest, int dest_x, int dest_y, int w, int h, uint8_t color
 uint8_t background_data[SCREEN_W * SCREEN_H];
 uint8_t namecard_data[SCREEN_W * SCREEN_H];
 
-int32_t user_e(void) {
+int32_t user_a(void) {
 
     int spacing = 8;
 
@@ -467,9 +463,9 @@ int32_t user_e(void) {
     ctx->palette->data[14] = ctx->palette->data[11] / 2;
 
     //shadow light
-    ctx->palette->data[15] = ctx->palette->data[9] / 3 * 2;
-    ctx->palette->data[16] = ctx->palette->data[10] / 3 * 2;
-    ctx->palette->data[17] = ctx->palette->data[11] / 3 * 2;
+    ctx->palette->data[15] = ctx->palette->data[9] / 4 * 3;
+    ctx->palette->data[16] = ctx->palette->data[10] / 4 * 3;
+    ctx->palette->data[17] = ctx->palette->data[11] / 4 * 3;
 
 
     uint8_t body_color = 1;
@@ -525,6 +521,8 @@ int32_t user_e(void) {
 
 
 
+    char buf[] = " ";
+
     while (1){
 
         int offset = 0;
@@ -568,10 +566,18 @@ int32_t user_e(void) {
                 break;
 
             case 3:
-                PRES_TITLE("The Graphics")
-                PRES_LINE("It has all the goodies.")
-                PRES_LINE("It's super awesome and stuff.")
-                PRES_LINE("12345678901234567890123456789012345678901")
+                PRES_TITLE("Text Output")
+                //PRES_LINE("It has all the goodies.")
+                //PRES_LINE("It's super awesome and stuff.")
+                //PRES_LINE("1234567890123456789012345678901234567890")
+                PRES_LINE("text(BITMAP * dst, BITMAP * font,")
+                PRES_LINE("  char * str, int x, int y) {")
+                PRES_LINE("  while (*str) {")
+                PRES_LINE("    blit(dst,font,x,y,*str * 8,0,8,8);")
+                PRES_LINE("    str++;")
+                PRES_LINE("    x += 8;")
+                PRES_LINE("  }")
+                PRES_LINE("}")
                 break;
 
             case 4:
@@ -581,14 +587,17 @@ int32_t user_e(void) {
 
         }
 
-
+        text(ctx->backbuffer, buf,0,0,0);
         drawscreen();
         int chr = c_getchar();
+
 
         if (chr == '6'){
             slide++;
         } else if (chr == '4'){
             slide--;
+        } else {
+            buf[0] = (char) chr;
         }
 
         if (slide < 0){

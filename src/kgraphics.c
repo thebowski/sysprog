@@ -105,32 +105,29 @@ void _kgfx_next_context(void){
 }
 
 GFX_CONTEXT * _kgfx_new_context(int pid){
-//    int context = -1;
-//    //check for existing context for this pid
-//    for (int i = 0; i < MAX_CONTEXTS; i++) {
-//        if (context_pid[i] == pid){
-//            context = i;
-//            break;
-//        }
-//    }
-//
-//    if (context == -1){
-//        //take first unused context
-//        for (int i = 0; i < MAX_CONTEXTS; i++){
-//            if (!context_pid[i]){
-//                num_contexts++;
-//                context_pid[i] = pid;
-//                context = i;
-//                break;
-//            }
-//        }
-//    }
-//    if (context == -1){
-//        //panic
-//    }
-    int context = num_contexts;
-    num_contexts++;
-    context_pid[context] = pid;
+    int context = -1;
+    //check for existing context for this pid
+    for (int i = 0; i < MAX_CONTEXTS; i++) {
+        if (context_pid[i] == pid){
+            context = i;
+            break;
+        }
+    }
+
+    if (context == -1){
+        //take first unused context
+        for (int i = 0; i < MAX_CONTEXTS; i++){
+            if (!context_pid[i]){
+                num_contexts++;
+                context_pid[i] = pid;
+                context = i;
+                break;
+            }
+        }
+    }
+    if (context == -1){
+        //panic
+    }
 
     _kmemclr(contexts[context].backbuffer->data, VGA_SIZE);
     _kmemcpy(&palettes[context], &default_palette, PALETTE_SIZE);
@@ -179,24 +176,6 @@ void _kgfx_draw_screen(int pid){
         vsync();
         _kgfx_load_palette(contexts[active_context].palette);
         blit(&screen, contexts[active_context].backbuffer, 0, 0);
-
-//        char buf[10] = "         ";
-//
-//        int div = 100000000;
-//        int i = 0;
-//        for (; i < 9; i++){
-//            int p = (pid / div) % 10;
-//            div /= 10;
-//            if (p == 0){
-//                continue;
-//            }
-//            if (div <= 1)
-//                break;
-//
-//            buf[i] = '0'+ p;
-//        }
-//
-//        text(&screen, buf,10,10, 0);
     }
 }
 
