@@ -171,6 +171,12 @@ uint8_t sprites[2][SPRITE_W * SPRITE_H] =
 
 int32_t user_a(void) {
 
+//    GFX_CONTEXT *ctx = getgfxcontext();
+//    cleartocolor(ctx->backbuffer, 200);
+//    //drawscreen();
+//
+//    return;
+
     BITMAP sprite = create_bitmap(SPRITE_W, SPRITE_H, 0, sprites[0]);
 
     BITMAP sprite2 = create_bitmap(SPRITE_W, SPRITE_H, '2', sprites[1]);
@@ -178,7 +184,7 @@ int32_t user_a(void) {
     BITMAP imatt = create_bitmap(100, 100, 255, image_matt);
 
     GFX_CONTEXT *ctx = getgfxcontext();
-    ctx->palette = &palette_matt;
+    ctx->palette = palette_matt;
 
     int x = 0, y = 0, dir = 0;
     int sx = 0, sy = 0, sy2=0;
@@ -298,6 +304,10 @@ int32_t user_a(void) {
 }
 
 int32_t user_b(void) {
+//    GFX_CONTEXT *ctx = getgfxcontext();
+//    cleartocolor(ctx->backbuffer, 50);
+//    //drawscreen();
+//    return;
 
     GFX_CONTEXT *ctx = getgfxcontext();
 
@@ -312,52 +322,18 @@ int color = 0;
 
         drawscreen();
     }
-
-
-    int i, j;
-    int32_t status;
-    char buf[12];
-
-    status = swrites("B", 1);
-    if (status != SUCCESS) {
-        cwrites("User B, write 1 status ", 23);
-        i = cvt_dec(buf, status);
-        cwrites(buf, i);
-        cwrites("\n", 1);
-    }
-    for (i = 0; i < 30; ++i) {
-        for (j = 0; j < DELAY_STD; ++j)
-            continue;
-        status = swrites("B", 1);
-        if (status != SUCCESS) {
-            cwrites("User B, write 2 status ", 23);
-            i = cvt_dec(buf, status);
-            cwrites(buf, i);
-            cwrites("\n", 1);
-        }
-    }
-
-    exit(EXIT_SUCCESS);
-
-    status = swrites("b", 1);    /* shouldn't happen! */
-    if (status != SUCCESS) {
-        cwrites("User B, write 3 status ", 23);
-        i = cvt_dec(buf, status);
-        cwrites(buf, i);
-        cwrites("\n", 1);
-    }
-    return (0);  // shut the compiler up!
-
 }
 
 int32_t user_c(void) {
-
+//    GFX_CONTEXT *ctx = getgfxcontext();
+//    cleartocolor(ctx->backbuffer, 150);
+//    //drawscreen();
+//    return;
 
     GFX_CONTEXT *ctx = getgfxcontext();
 
 
-    while (1)
-    {
+    while (1) {
 
         cleartocolor(ctx->backbuffer, 16);
 
@@ -372,51 +348,15 @@ int32_t user_c(void) {
 
         for (int j = 0; j < 16; j++) {
             for (int i = 0; i < 16; i++) {
-                putpixel(ctx->backbuffer, 10 + i, 10 + j, i + j * 16);
+                putpixel(ctx->backbuffer, 100 + i, 100 + j, i + j * 16);
             }
 
         }
 
-        text(ctx->backbuffer, "Suck it the World!", 100,100, 0);
+        text(ctx->backbuffer, "Suck it the World!", 100, 100, 0);
 
         drawscreen();
     }
-
-
-    int i, j;
-    int32_t status;
-    char buf[12];
-
-    status = swrites("C", 1);
-    if (status != SUCCESS) {
-        cwrites("User C, write 1 status ", 23);
-        i = cvt_dec(buf, status);
-        cwrites(buf, i);
-        cwrites("\n", 1);
-    }
-    for (i = 0; i < 30; ++i) {
-        for (j = 0; j < DELAY_STD; ++j)
-            continue;
-        status = swrites("C", 1);
-        if (status != SUCCESS) {
-            cwrites("User C, write 2 status ", 23);
-            i = cvt_dec(buf, status);
-            cwrites(buf, i);
-            cwrites("\n", 1);
-        }
-    }
-
-    exit(EXIT_SUCCESS);
-
-    status = swrites("c", 1);    /* shouldn't happen! */
-    if (status != SUCCESS) {
-        cwrites("User C, write 3 status ", 23);
-        i = cvt_dec(buf, status);
-        cwrites(buf, i);
-        cwrites("\n", 1);
-    }
-    return (0);  // shut the compiler up!
-
 }
 
 /*
@@ -429,7 +369,7 @@ int32_t user_d(void) {
     GFX_CONTEXT *ctx = getgfxcontext();
 
     BITMAP jupiter = create_bitmap(320,200,-1,jupiter_image);
-    ctx->palette = &jupiter_palette;
+    ctx->palette = jupiter_palette;
 
     blit(ctx->backbuffer, &jupiter, 0,0);
     while (1)
@@ -439,45 +379,13 @@ int32_t user_d(void) {
         drawscreen();
     }
 
-    int pid;
-
-    swrites("D", 1);
-
-    pid = fork();
-    if (pid < 0) {
-        cwrite("User D fork() failed\n");
-    } else if (pid == 0) {
-        exec(user_z);
-        cwrite("User D, exec(Z) failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    swrites("D", 1);
-
-    exit(EXIT_SUCCESS);
-
-    return (0);  // shut the compiler up!
 
 }
 
-#define spacing  8
-
-#define titlecard_w  (320 - spacing * 2)
-#define titlecard_h  (spacing * 3)
-#define titlecard_x  spacing
-#define titlecard_y  spacing
 
 
-#define bodycard_w  titlecard_w
-#define bodycard_h  (200 - (spacing * 3) - titlecard_h)
-#define bodycard_x  titlecard_x
-#define bodycard_y  (titlecard_h + titlecard_y + spacing)
-
-uint8_t background_data[SCREEN_W * SCREEN_H];
-uint8_t namecard_data[SCREEN_W * SCREEN_H];
-
-#define TITLE(str) text_ex(ctx->backbuffer, &font_white, str, header_x, header_y, 1);
-#define LINE(str) text(ctx->backbuffer, str, body_x, body_y + offset, 0); offset += body_step;
+#define PRES_TITLE(str) text_ex(ctx->backbuffer, &font_white, str, header_x, header_y, 1);
+#define PRES_LINE(str) text(ctx->backbuffer, str, body_x, body_y + offset, 0); offset += body_step;
 
 
 
@@ -508,7 +416,25 @@ void draw_card(BITMAP *dest, int dest_x, int dest_y, int w, int h, uint8_t color
 ** User E sleeps for 10 seconds at a time.
 */
 
+uint8_t background_data[SCREEN_W * SCREEN_H];
+uint8_t namecard_data[SCREEN_W * SCREEN_H];
+
 int32_t user_e(void) {
+
+    int spacing = 8;
+
+    int titlecard_w = (320 - spacing * 2);
+    int titlecard_h = (spacing * 3);
+    int titlecard_x = spacing;
+    int titlecard_y = spacing;
+
+
+    int bodycard_w = titlecard_w;
+    int bodycard_h = (200 - (spacing * 3) - titlecard_h);
+    int bodycard_x = titlecard_x;
+    int bodycard_y = (titlecard_h + titlecard_y + spacing);
+
+
 
     GFX_CONTEXT *ctx = getgfxcontext();
 
@@ -607,37 +533,37 @@ int32_t user_e(void) {
         switch (slide) {
             case 0:
                 blit(ctx->backbuffer, &namecard, 0, 0);
-                TITLE("Cheman OS")
+                PRES_TITLE("Cheman OS")
                 break;
             case 1:
-                TITLE("Our Stuff")
-                LINE("- IDE Driver")
-                LINE("- Graphics Driver")
+                PRES_TITLE("Our Stuff")
+                PRES_LINE("- IDE Driver")
+                PRES_LINE("- Graphics Driver")
                 break;
 
             case 2:
-                TITLE("The Disk")
-                LINE("Line 1")
-                LINE("Line 2")
-                LINE("Line 3")
-                LINE("Line 4")
-                LINE("Line 5")
-                LINE("LINE 6")
-                LINE("LINE 7")
-                LINE("LINE 8")
-                LINE("LINE 9")
+                PRES_TITLE("The Disk")
+                PRES_LINE("Line 1")
+                PRES_LINE("Line 2")
+                PRES_LINE("Line 3")
+                PRES_LINE("Line 4")
+                PRES_LINE("Line 5")
+                PRES_LINE("LINE 6")
+                PRES_LINE("LINE 7")
+                PRES_LINE("LINE 8")
+                PRES_LINE("LINE 9")
                 break;
 
             case 3:
-                TITLE("The Graphics")
-                LINE("It has all the goodies.")
-                LINE("It's super awesome and stuff.")
-                LINE("12345678901234567890123456789012345678901")
+                PRES_TITLE("The Graphics")
+                PRES_LINE("It has all the goodies.")
+                PRES_LINE("It's super awesome and stuff.")
+                PRES_LINE("12345678901234567890123456789012345678901")
                 break;
 
             case 4:
-                TITLE("THE END.")
-                LINE("Questions?")
+                PRES_TITLE("THE END.")
+                PRES_LINE("Questions?")
                 break;
 
         }
@@ -661,8 +587,6 @@ int32_t user_e(void) {
 
 
     }
-
-    return;
 }
 
 
