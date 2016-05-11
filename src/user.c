@@ -533,7 +533,20 @@ int32_t user_e(void) {
         switch (slide) {
             case 0:
                 blit(ctx->backbuffer, &namecard, 0, 0);
-                PRES_TITLE("Cheman OS")
+                text_ex(ctx->backbuffer, &font_white, "Cheman OS", header_x, spacing + projtitle_h / 2, 1);
+
+                text_ex(ctx->backbuffer, &font_white, "Matthew", spacing + namecardsize / 2, projtitle_h + spacing * 4, 1);
+                text_ex(ctx->backbuffer, &font_white, "Cheman", spacing + namecardsize / 2, projtitle_h + spacing * 6, 1);
+
+                text_ex(ctx->backbuffer, &font_white, "Neil", spacing + namecardsize / 2 + (spacing + namecardsize), projtitle_h + spacing * 4, 1);
+                text_ex(ctx->backbuffer, &font_white, "Guertin", spacing + namecardsize / 2 + (spacing + namecardsize), projtitle_h + spacing * 6, 1);
+
+                text_ex(ctx->backbuffer, &font_white, "Alexander", spacing + namecardsize / 2 + (spacing + namecardsize) * 2, projtitle_h + spacing * 4, 1);
+                text_ex(ctx->backbuffer, &font_white, "Bobowski", spacing + namecardsize / 2 + (spacing + namecardsize) * 2, projtitle_h + spacing * 6, 1);
+
+
+
+
                 break;
             case 1:
                 PRES_TITLE("Our Stuff")
