@@ -435,7 +435,6 @@ int32_t user_d(void) {
 
 
         drawscreen();
-        c_getchar();
     }
 
     int pid;
@@ -476,6 +475,10 @@ uint8_t titlecard_data[titlecard_w * titlecard_h];
 uint8_t bodycard_data[bodycard_w * bodycard_h];
 uint8_t background_data[SCREEN_W * SCREEN_H];
 
+#define TITLE(str) text_ex(ctx->backbuffer, &font_white, str, header_x, header_y, 1);
+#define LINE(str) text(ctx->backbuffer, str, body_x, body_y + offset, 0); offset += body_step;
+
+
 /*
 ** Users E, F, and G test the sleep facility.
 **
@@ -483,10 +486,6 @@ uint8_t background_data[SCREEN_W * SCREEN_H];
 */
 
 int32_t user_e(void) {
-
-    char title1[] = "Our OS Project";
-    char title2[] = "The Graphics";
-    char title3[] = "THE END";
 
     GFX_CONTEXT *ctx = getgfxcontext();
 
@@ -535,7 +534,7 @@ int32_t user_e(void) {
     int body_step = 16;
 
     int slide = 0;
-    int MAX_SLIDE = 2;
+    int MAX_SLIDE = 3;
 
 
     cleartocolor(&titlecard, title_color);
@@ -570,44 +569,39 @@ int32_t user_e(void) {
     while (1){
 
         int offset = 0;
-
-
         blit(ctx->backbuffer, &background, 0, 0);
-
-
-
 
         switch (slide) {
             case 0:
-                text_ex(ctx->backbuffer, &font_white, title1, header_x, header_y, 1);
-
-                text(ctx->backbuffer, "This is a cool idea.", body_x, body_y + offset, 0);
-                offset += body_step;
-                text(ctx->backbuffer, "Well why didn't you say so?", body_x, body_y + offset, 0);
-                offset += body_step;
-                text(ctx->backbuffer, "Turnips.", body_x, body_y + offset, 0);
-                offset += body_step;
-
+                TITLE("Our OS Project")
+                LINE("- IDE Driver")
+                LINE("- Graphics Driver")
                 break;
 
             case 1:
-                text_ex(ctx->backbuffer, &font_white, title2, header_x, header_y, 1);
-
-                text(ctx->backbuffer, "Hey.", body_x, body_y + offset, 0);
-                offset += body_step;
-                text(ctx->backbuffer, "So I guess this is the second slide...", body_x, body_y + offset, 0);
-                offset += body_step;
-                text(ctx->backbuffer, "I wonder how long this can go... I wonder ...", body_x, body_y + offset, 0);
-                offset += body_step;
-
+                TITLE("The Disk")
+                LINE("Line 1")
+                LINE("Line 2")
+                LINE("Line 3")
+                LINE("Line 4")
+                LINE("Line 5")
+                LINE("LINE 6")
+                LINE("LINE 7")
+                LINE("LINE 8")
+                LINE("LINE 9")
                 break;
+
             case 2:
-                text_ex(ctx->backbuffer, &font_white, title3, header_x, header_y, 1);
+                TITLE("The Graphics")
+                LINE("It has all the goodies.")
+                LINE("It's super awesome and stuff.")
+                LINE("12345678901234567890123456789012345678901")
+                break;
 
-                text(ctx->backbuffer, "Finished", body_x, body_y + offset, 0);
-                offset += body_step;
-                text(ctx->backbuffer, "Questions?", body_x, body_y + offset, 0);
-
+            case 3:
+                TITLE("THE END.")
+                LINE("Questions?")
+                break;
 
         }
 
