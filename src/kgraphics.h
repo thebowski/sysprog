@@ -49,21 +49,20 @@ struct BITMAP {
     uint8_t *data;
 };
 
-typedef struct COLOR {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-} COLOR;
+
+
 
 struct PALETTE {
-    COLOR data[256];
+    uint8_t data[256 * 3];
 };
+
 
 /*
 ** Globals
 */
 
 BITMAP font;
+BITMAP font_white;
 
 /*
 ** Prototypes

@@ -14,11 +14,14 @@ extern uint8_t jupiter_palette[];
 
 
 extern uint8_t font_data[];
+extern uint8_t font_data_white[];
 
 
 extern uint8_t image_matt[];
 
 extern uint8_t jupiter_image[];
 
+
+#define FONT_BYTES (1024 * 8)
 
 #endif //SRC_IMAGES_H

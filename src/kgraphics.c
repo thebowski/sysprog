@@ -65,8 +65,15 @@ void _kgfx_init(void){
     _kgfx_delete_context(0); //delete all contexts
     num_contexts = 0;
 
-    screen = create_bitmap(SCREEN_W, SCREEN_H, -1, VGA_START);
+    screen = create_bitmap(SCREEN_W, SCREEN_H, 255, VGA_START);
     font = create_bitmap(1024, 8, -1, font_data);
+
+    for (int i = 0; i < FONT_BYTES; i++){
+        font_data_white[i] = font_data[i] == 255 ? 0 : 1;
+    }
+
+    font_white = create_bitmap(1024, 8, 0, font_data_white);
+
 
     cleartocolor(&screen, 5*16 + 8);
     text(&screen, "Welcome", 160, 75, 1);
@@ -88,6 +95,7 @@ void _kgfx_next_context(void){
         if (context_pid[active_context])
             break;
     }
+    _kgfx_draw_screen(context_pid[active_context]);
 }
 
 GFX_CONTEXT * _kgfx_new_context(int pid){
@@ -139,9 +147,9 @@ void _kgfx_delete_context(int pid){
 void _kgfx_load_palette(PALETTE *palette){
     __outb(VGA_PORT_PALETTE_INDEX, 0); //0 for set all palette colors
     for (int i = 0; i < 256; i++){
-        __outb(VGA_PORT_PALETTE_COLOR, palette->data[i].r);
-        __outb(VGA_PORT_PALETTE_COLOR, palette->data[i].g);
-        __outb(VGA_PORT_PALETTE_COLOR, palette->data[i].b);
+        __outb(VGA_PORT_PALETTE_COLOR, palette->data[i * 3]);
+        __outb(VGA_PORT_PALETTE_COLOR, palette->data[i * 3 + 1]);
+        __outb(VGA_PORT_PALETTE_COLOR, palette->data[i * 3 + 2]);
     }
 }
 

@@ -435,6 +435,7 @@ int32_t user_d(void) {
 
 
         drawscreen();
+        c_getchar();
     }
 
     int pid;
@@ -458,6 +459,22 @@ int32_t user_d(void) {
 
 }
 
+#define spacing  8
+
+#define titlecard_w  (320 - spacing * 2)
+#define titlecard_h  (spacing * 3)
+#define titlecard_x  spacing
+#define titlecard_y  spacing
+
+
+#define bodycard_w  titlecard_w
+#define bodycard_h  (200 - (spacing * 3) - titlecard_h)
+#define bodycard_x  titlecard_x
+#define bodycard_y  (titlecard_h + titlecard_y + spacing)
+
+uint8_t titlecard_data[titlecard_w * titlecard_h];
+uint8_t bodycard_data[bodycard_w * bodycard_h];
+uint8_t background_data[SCREEN_W * SCREEN_H];
 
 /*
 ** Users E, F, and G test the sleep facility.
@@ -466,6 +483,156 @@ int32_t user_d(void) {
 */
 
 int32_t user_e(void) {
+
+    char title1[] = "Our OS Project";
+    char title2[] = "The Graphics";
+    char title3[] = "THE END";
+
+    GFX_CONTEXT *ctx = getgfxcontext();
+
+
+    BITMAP titlecard = create_bitmap(titlecard_w, titlecard_h, -1, &titlecard_data);
+    BITMAP bodycard = create_bitmap(bodycard_w, bodycard_h, -1, &bodycard_data);
+    BITMAP background = create_bitmap(SCREEN_W, SCREEN_H, -1, &background_data);
+
+    // text color
+    ctx->palette->data[0] = 5;
+    ctx->palette->data[1] = 5;
+    ctx->palette->data[2] = 5;
+
+    //body
+    ctx->palette->data[3] = 63;
+    ctx->palette->data[4] = 63;
+    ctx->palette->data[5] = 63;
+
+    //title
+    ctx->palette->data[6] = 19;
+    ctx->palette->data[7] = 26;
+    ctx->palette->data[8] = 60;
+
+    //background
+    ctx->palette->data[9] = 51;
+    ctx->palette->data[10] = 52;
+    ctx->palette->data[11] = 60;
+
+    //shadow
+    ctx->palette->data[12] = ctx->palette->data[9] / 2;
+    ctx->palette->data[13] = ctx->palette->data[10] / 2;
+    ctx->palette->data[14] = ctx->palette->data[11] / 2;
+
+
+    uint8_t body_color = 1;
+    uint8_t title_color = 2;
+    uint8_t back_color = 3;
+    uint8_t shadow_color = 4;
+
+    int header_x = 320 / 2;
+    int header_y = titlecard_y + spacing;
+
+    int body_x = bodycard_x + spacing;
+    int body_y = bodycard_y + spacing;
+
+    int body_step = 16;
+
+    int slide = 0;
+    int MAX_SLIDE = 2;
+
+
+    cleartocolor(&titlecard, title_color);
+    cleartocolor(&bodycard, body_color);
+
+    cleartocolor(&background, back_color);
+    blit(&background, &titlecard, titlecard_x, titlecard_y);
+    blit(&background, &bodycard, bodycard_x, bodycard_y);
+
+
+    //body shadow
+    for (int i = spacing + 2; i < bodycard_x + bodycard_w + 2; i++){
+        putpixel(&background, i, bodycard_y + bodycard_h, shadow_color);
+        putpixel(&background, i, bodycard_y + bodycard_h + 1, shadow_color);
+    }
+    for (int i = bodycard_y + 2; i < bodycard_y + bodycard_h + 2; i++){
+        putpixel(&background, bodycard_x + bodycard_w, i, shadow_color);
+        putpixel(&background, bodycard_x + bodycard_w + 1, i, shadow_color);
+    }
+
+
+    //header shadow
+    for (int i = spacing + 2; i < titlecard_x + titlecard_w + 2; i++){
+        putpixel(&background, i, titlecard_y + titlecard_h, shadow_color);
+        putpixel(&background, i, titlecard_y + titlecard_h + 1, shadow_color);
+    }
+    for (int i = titlecard_y + 2; i < titlecard_y + titlecard_h; i++){
+        putpixel(&background, titlecard_x + titlecard_w, i, shadow_color);
+        putpixel(&background, titlecard_x + titlecard_w + 1, i, shadow_color);
+    }
+
+    while (1){
+
+        int offset = 0;
+
+
+        blit(ctx->backbuffer, &background, 0, 0);
+
+
+
+
+        switch (slide) {
+            case 0:
+                text_ex(ctx->backbuffer, &font_white, title1, header_x, header_y, 1);
+
+                text(ctx->backbuffer, "This is a cool idea.", body_x, body_y + offset, 0);
+                offset += body_step;
+                text(ctx->backbuffer, "Well why didn't you say so?", body_x, body_y + offset, 0);
+                offset += body_step;
+                text(ctx->backbuffer, "Turnips.", body_x, body_y + offset, 0);
+                offset += body_step;
+
+                break;
+
+            case 1:
+                text_ex(ctx->backbuffer, &font_white, title2, header_x, header_y, 1);
+
+                text(ctx->backbuffer, "Hey.", body_x, body_y + offset, 0);
+                offset += body_step;
+                text(ctx->backbuffer, "So I guess this is the second slide...", body_x, body_y + offset, 0);
+                offset += body_step;
+                text(ctx->backbuffer, "I wonder how long this can go... I wonder ...", body_x, body_y + offset, 0);
+                offset += body_step;
+
+                break;
+            case 2:
+                text_ex(ctx->backbuffer, &font_white, title3, header_x, header_y, 1);
+
+                text(ctx->backbuffer, "Finished", body_x, body_y + offset, 0);
+                offset += body_step;
+                text(ctx->backbuffer, "Questions?", body_x, body_y + offset, 0);
+
+
+        }
+
+
+        drawscreen();
+        int chr = c_getchar();
+
+        if (chr == 's'){
+            slide++;
+        } else if (chr == 'a'){
+            slide--;
+        }
+
+        if (slide < 0){
+            slide = 0;
+        }
+        if (slide > MAX_SLIDE){
+            slide = MAX_SLIDE;
+        }
+
+
+    }
+
+    return;
+
     int i;
     int32_t pid;
     char buf[12];
