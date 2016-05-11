@@ -41,7 +41,7 @@ GFX_CONTEXT contexts[MAX_CONTEXTS];
 BITMAP backbuffers[MAX_CONTEXTS];
 PALETTE palettes[MAX_CONTEXTS];
 
-uint8_t data_backbuffers[MAX_CONTEXTS][VGA_SIZE];
+uint8_t data_backbuffers[MAX_CONTEXTS][VGA_SIZE * 2];
 
 BITMAP screen;
 
@@ -118,15 +118,15 @@ GFX_CONTEXT * _kgfx_new_context(int pid){
                 break;
             }
         }
-        if (context == -1){
-            //panic
-        }
+    }
+    if (context == -1){
+        //panic
     }
 
     _kmemclr(contexts[context].backbuffer->data, VGA_SIZE);
     _kmemcpy(&palettes[context], &default_palette, PALETTE_SIZE);
 
-    active_context = context;
+    //active_context = context;
 
     return &contexts[context];
 
@@ -171,6 +171,23 @@ void _kgfx_draw_screen(int pid){
         _kgfx_load_palette(contexts[active_context].palette);
         blit(&screen, contexts[active_context].backbuffer, 0, 0);
 
+//        char buf[10] = "         ";
+//
+//        int div = 100000000;
+//        int i = 0;
+//        for (; i < 9; i++){
+//            int p = (pid / div) % 10;
+//            div /= 10;
+//            if (p == 0){
+//                continue;
+//            }
+//            if (div <= 1)
+//                break;
+//
+//            buf[i] = '0'+ p;
+//        }
+//
+//        text(&screen, buf,10,10, 0);
     }
 }
 

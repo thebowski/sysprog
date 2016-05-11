@@ -48,11 +48,7 @@ BITMAP create_bitmap(int width, int height, uint8_t transparent_color, uint8_t *
     BITMAP a = {.width = width,
             .height = height,
             .transparent = transparent_color,
-            .data = data,
-            .sub_x = 0,
-            .sub_y = 0,
-            .sub_w = width,
-            .sub_h = height
+            .data = data
     };
     return a;
 }
@@ -110,28 +106,28 @@ void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int s
 
 
     //src is drawn partially outside left of dest, must adjust
-    if (dest_x + src_x - dest->sub_x < 0) {
-        src_x += INT_ABS(dest_x) + dest->sub_x;
-        width -= INT_ABS(dest_x) + dest->sub_x;
+    if (dest_x + src_x < 0) {
+        src_x += INT_ABS(dest_x);
+        width -= INT_ABS(dest_x);
         dest_x = 0;
     }
 
-    if (dest_x + width > dest->sub_w) {
-        width = dest->sub_w - dest_x;
+    if (dest_x + width > dest->width) {
+        width = dest->width - dest_x;
     }
 
-    int dest_size = dest->sub_x + dest->sub_w + (dest->sub_y + dest->sub_h - 1) * dest->width;
+    int dest_size = dest->height * dest->width;
     int src_offset = src_x + src->width * src_y;
 
     for (int row = 0; row < height; row++) {
-        int dest_offset = dest_x + dest->sub_x + dest->width * (row + dest_y + dest->sub_y);
+        int dest_offset = dest_x + dest->width * (row + dest_y);
         if (dest_offset < 0)
             continue;
         if (dest_offset >= dest_size)
             break;
 
-        int *d = dest->data + dest_offset;
-        int *s = src->data + src_offset + src->width * row;
+        uint8_t *d = dest->data + dest_offset;
+        uint8_t *s = src->data + src_offset + src->width * row;
         if (src->transparent == -1) //no transparency
             _kmemcpy(d, s, width);
         else
@@ -142,13 +138,13 @@ void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int s
 
 void cleartocolor(BITMAP *bmp, uint8_t color) {
 
-    for (int row = bmp->sub_y; row < bmp->sub_h; row++)
-        _kmemset(bmp->data + bmp->sub_x + row * bmp->width, bmp->sub_w, color);
+    for (int row = 0; row < bmp->height; row++)
+        _kmemset(bmp->data + row * bmp->width, bmp->width, color);
 }
 
 
 inline void putpixel(BITMAP *bmp, int x, int y, uint8_t color) {
-    if (x < bmp->sub_x || y < bmp->sub_y || x >= bmp->sub_w || y >= bmp->sub_h)
+    if (x < 0 || y < 0 || x >= bmp->width || y >= bmp->height)
         return;
     //try shifts ie y << 8 + y << 6      320y = 256y + 64y,
     uint8_t *pixel = bmp->data + y * bmp->width + x;
@@ -157,10 +153,10 @@ inline void putpixel(BITMAP *bmp, int x, int y, uint8_t color) {
 
 
 void drawline(BITMAP *bmp, int x0, int y0, int x1, int y1, uint8_t color) {
-    CLAMP(x0, bmp->sub_x, bmp->sub_w);
-    CLAMP(y0, bmp->sub_y, bmp->sub_h);
-    CLAMP(x1, bmp->sub_x, bmp->sub_w);
-    CLAMP(y1, bmp->sub_y, bmp->sub_h);
+    CLAMP(x0, 0, bmp->width);
+    CLAMP(y0, 0, bmp->height);
+    CLAMP(x1, 0, bmp->width);
+    CLAMP(y1, 0, bmp->height);
 
     int swapped = 0;
     if (x0 > x1) {//steep points into left to right order

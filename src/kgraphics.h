@@ -41,10 +41,6 @@ struct BITMAP {
     int width;
     int height;
     int transparent; //color which is substituted as transparency, -1 for no transparency
-    int sub_x;
-    int sub_y;
-    int sub_w; //should be initialized to width
-    int sub_h;
 
     uint8_t *data;
 };

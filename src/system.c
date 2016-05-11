@@ -252,7 +252,7 @@ void _init( void ) {
 
 	c_puts( "System initialization starting\n" );
 	c_puts( "------------------------------\n" );
-	__delay( 200 );  // about 5 seconds
+	//__delay( 200 );  // about 5 seconds
 
 	c_puts( "Module init: " );
 

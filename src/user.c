@@ -290,6 +290,8 @@ int32_t user_a(void) {
         drawline(ctx->backbuffer, 280, 0, 280, 40, 0);
         drawline(ctx->backbuffer, 280, 40, 320, 40, 0);
 
+        text(ctx->backbuffer, "HEY THIS IS WORKING.",200,10, 1);
+
         drawscreen();
     }
 
@@ -471,13 +473,34 @@ int32_t user_d(void) {
 #define bodycard_x  titlecard_x
 #define bodycard_y  (titlecard_h + titlecard_y + spacing)
 
-uint8_t titlecard_data[titlecard_w * titlecard_h];
-uint8_t bodycard_data[bodycard_w * bodycard_h];
 uint8_t background_data[SCREEN_W * SCREEN_H];
+uint8_t namecard_data[SCREEN_W * SCREEN_H];
 
 #define TITLE(str) text_ex(ctx->backbuffer, &font_white, str, header_x, header_y, 1);
 #define LINE(str) text(ctx->backbuffer, str, body_x, body_y + offset, 0); offset += body_step;
 
+
+
+void draw_card(BITMAP *dest, int dest_x, int dest_y, int w, int h, uint8_t color, uint8_t shadow_color, uint8_t shadow_color_light){
+
+    //card
+    for (int y = dest_y; y < dest_y + h; y++) {
+        for (int x = dest_x; x < dest_x + w; x++) {
+            putpixel(dest, x, y, color);
+        }
+    }
+
+    //shadows
+    for (int x = dest_x + 2; x < dest_x + w + 1; x++){
+        putpixel(dest, x, dest_y + h, shadow_color);
+        putpixel(dest, x, dest_y + h + 1, shadow_color_light);
+    }
+    for (int y = dest_y + 2; y < dest_y + h + 1; y++){
+        putpixel(dest, dest_x + w, y, shadow_color);
+        putpixel(dest, dest_x + w + 1, y, shadow_color_light);
+    }
+    putpixel(dest, dest_x + w + 1, dest_y + h + 1, shadow_color_light);
+}
 
 /*
 ** Users E, F, and G test the sleep facility.
@@ -489,15 +512,13 @@ int32_t user_e(void) {
 
     GFX_CONTEXT *ctx = getgfxcontext();
 
-
-    BITMAP titlecard = create_bitmap(titlecard_w, titlecard_h, -1, &titlecard_data);
-    BITMAP bodycard = create_bitmap(bodycard_w, bodycard_h, -1, &bodycard_data);
-    BITMAP background = create_bitmap(SCREEN_W, SCREEN_H, -1, &background_data);
+    BITMAP background = create_bitmap(SCREEN_W, SCREEN_H, -1, background_data);
+    BITMAP namecard = create_bitmap(SCREEN_W, SCREEN_H, -1, namecard_data);
 
     // text color
-    ctx->palette->data[0] = 5;
-    ctx->palette->data[1] = 5;
-    ctx->palette->data[2] = 5;
+    ctx->palette->data[0] = 10;
+    ctx->palette->data[1] = 10;
+    ctx->palette->data[2] = 10;
 
     //body
     ctx->palette->data[3] = 63;
@@ -519,11 +540,17 @@ int32_t user_e(void) {
     ctx->palette->data[13] = ctx->palette->data[10] / 2;
     ctx->palette->data[14] = ctx->palette->data[11] / 2;
 
+    //shadow light
+    ctx->palette->data[15] = ctx->palette->data[9] / 3 * 2;
+    ctx->palette->data[16] = ctx->palette->data[10] / 3 * 2;
+    ctx->palette->data[17] = ctx->palette->data[11] / 3 * 2;
+
 
     uint8_t body_color = 1;
     uint8_t title_color = 2;
     uint8_t back_color = 3;
     uint8_t shadow_color = 4;
+    uint8_t shadow_color_light = 5;
 
     int header_x = 320 / 2;
     int header_y = titlecard_y + spacing;
@@ -534,37 +561,43 @@ int32_t user_e(void) {
     int body_step = 16;
 
     int slide = 0;
-    int MAX_SLIDE = 3;
+    int MAX_SLIDE = 4;
 
-
-    cleartocolor(&titlecard, title_color);
-    cleartocolor(&bodycard, body_color);
 
     cleartocolor(&background, back_color);
-    blit(&background, &titlecard, titlecard_x, titlecard_y);
-    blit(&background, &bodycard, bodycard_x, bodycard_y);
+    cleartocolor(&namecard, back_color);
+
+    draw_card(&background, titlecard_x, titlecard_y, titlecard_w, titlecard_h, title_color, shadow_color, shadow_color_light);
+    draw_card(&background, bodycard_x, bodycard_y, bodycard_w, bodycard_h, body_color, shadow_color, shadow_color_light);
 
 
-    //body shadow
-    for (int i = spacing + 2; i < bodycard_x + bodycard_w + 2; i++){
-        putpixel(&background, i, bodycard_y + bodycard_h, shadow_color);
-        putpixel(&background, i, bodycard_y + bodycard_h + 1, shadow_color);
-    }
-    for (int i = bodycard_y + 2; i < bodycard_y + bodycard_h + 2; i++){
-        putpixel(&background, bodycard_x + bodycard_w, i, shadow_color);
-        putpixel(&background, bodycard_x + bodycard_w + 1, i, shadow_color);
-    }
+    int projtitle_h = 120;
+    draw_card(&namecard, spacing, spacing, titlecard_w, projtitle_h, title_color, shadow_color, shadow_color_light);
+
+    int namecardsize = (titlecard_w - 2 * spacing) / 3;
+
+    draw_card(&namecard,
+              spacing,
+              projtitle_h + spacing * 2,
+              namecardsize,
+              7 * spacing,
+              title_color, shadow_color, shadow_color_light);
+
+    draw_card(&namecard,
+              spacing * 2 + namecardsize,
+              projtitle_h + spacing * 2,
+              namecardsize,
+              7 * spacing,
+              title_color, shadow_color, shadow_color_light);
+
+    draw_card(&namecard,
+              spacing * 3 + namecardsize * 2,
+              projtitle_h + spacing * 2,
+              namecardsize,
+              7 * spacing,
+              title_color, shadow_color, shadow_color_light);
 
 
-    //header shadow
-    for (int i = spacing + 2; i < titlecard_x + titlecard_w + 2; i++){
-        putpixel(&background, i, titlecard_y + titlecard_h, shadow_color);
-        putpixel(&background, i, titlecard_y + titlecard_h + 1, shadow_color);
-    }
-    for (int i = titlecard_y + 2; i < titlecard_y + titlecard_h; i++){
-        putpixel(&background, titlecard_x + titlecard_w, i, shadow_color);
-        putpixel(&background, titlecard_x + titlecard_w + 1, i, shadow_color);
-    }
 
     while (1){
 
@@ -573,12 +606,16 @@ int32_t user_e(void) {
 
         switch (slide) {
             case 0:
-                TITLE("Our OS Project")
+                blit(ctx->backbuffer, &namecard, 0, 0);
+                TITLE("Cheman OS")
+                break;
+            case 1:
+                TITLE("Our Stuff")
                 LINE("- IDE Driver")
                 LINE("- Graphics Driver")
                 break;
 
-            case 1:
+            case 2:
                 TITLE("The Disk")
                 LINE("Line 1")
                 LINE("Line 2")
@@ -591,14 +628,14 @@ int32_t user_e(void) {
                 LINE("LINE 9")
                 break;
 
-            case 2:
+            case 3:
                 TITLE("The Graphics")
                 LINE("It has all the goodies.")
                 LINE("It's super awesome and stuff.")
                 LINE("12345678901234567890123456789012345678901")
                 break;
 
-            case 3:
+            case 4:
                 TITLE("THE END.")
                 LINE("Questions?")
                 break;
@@ -609,9 +646,9 @@ int32_t user_e(void) {
         drawscreen();
         int chr = c_getchar();
 
-        if (chr == 's'){
+        if (chr == '6'){
             slide++;
-        } else if (chr == 'a'){
+        } else if (chr == '4'){
             slide--;
         }
 
@@ -626,25 +663,6 @@ int32_t user_e(void) {
     }
 
     return;
-
-    int i;
-    int32_t pid;
-    char buf[12];
-
-    pid = getpid();
-    cwrites("User E (", 8);
-    i = cvt_dec(buf, pid);
-    cwrites(buf, i);
-    cwrites(") running\n", 10);
-    swrites("E", 1);
-    for (i = 0; i < 5; ++i) {
-        sleep(10);
-        swrites("E", 1);
-    }
-
-    exit(EXIT_SUCCESS);
-    return (0);  // shut the compiler up!
-
 }
 
 
