@@ -524,7 +524,7 @@ int32_t user_a(void) {
 
 
     int MAX_SLIDE = 11;
-    int MIN_SLIDE = -14;
+    int MIN_SLIDE = -6;
     int slide = MIN_SLIDE;
 
     while (1){
@@ -533,9 +533,9 @@ int32_t user_a(void) {
         blit(ctx->backbuffer, &background, 0, 0);
 
         switch (slide) {
-            case -14:
+            case -6:
                 blit(ctx->backbuffer, &namecard, 0, 0);
-                text_ex(ctx->backbuffer, &font_white, "Cheman OS", header_x, spacing + projtitle_h / 2, 1);
+                text_ex(ctx->backbuffer, &font_white, "Operating System OS", header_x, spacing + projtitle_h / 2, 1);
 
                 text_ex(ctx->backbuffer, &font_white, "Matthew", spacing + namecardsize / 2, projtitle_h + spacing * 4, 1);
                 text_ex(ctx->backbuffer, &font_white, "Cheman", spacing + namecardsize / 2, projtitle_h + spacing * 6, 1);
@@ -547,7 +547,7 @@ int32_t user_a(void) {
                 text_ex(ctx->backbuffer, &font_white, "Bobowski", spacing + namecardsize / 2 + (spacing + namecardsize) * 2, projtitle_h + spacing * 6, 1);
                 break;
 
-            case -13:
+            case -5:
                 PRES_TITLE("Project Goal")
                 PRES_LINE("Display Images")
                 PRES_LINE("")
@@ -558,7 +558,7 @@ int32_t user_a(void) {
                 PRES_LINE("Enter commands through terminal")
                 break;
 
-            case -12:
+            case -4:
                 PRES_TITLE("Network - 3 Layers")
                 PRES_LINE("User Space")
                 PRES_LINE("  Request port, relinquish port, send")
@@ -570,7 +570,7 @@ int32_t user_a(void) {
                 PRES_LINE("  Send packet, receive packet")
                 break;
 
-            case -11:
+            case -3:
                 PRES_TITLE("Network - User Space")
                 PRES_LINE("Request and relinquish ports from OS")
                 PRES_LINE(" -Ask for port with port number, pass")
@@ -583,7 +583,7 @@ int32_t user_a(void) {
                 PRES_LINE("    definitely, UDP and TCP planned")
                 break;
 
-            case -10:
+            case -2:
                 PRES_TITLE("Network - OS Space")
                 PRES_LINE("OS handles endian conversion,")
                 PRES_LINE("  IP header creation and port verification")
@@ -595,7 +595,7 @@ int32_t user_a(void) {
                 PRES_LINE("Tells network driver to send packets")
                 break;
 
-            case -9:
+            case -1:
                 PRES_TITLE("Network - Driver Space")
                 PRES_LINE("Handles setup of the network card")
                 PRES_LINE("")
@@ -607,27 +607,41 @@ int32_t user_a(void) {
                 //PRES_LINE("345678901234567890123456789012345678901")
                 break;
 
-            case -8:
-                break;
-            case -7:
-                break;
-            case -6:
-                break;
-            case -5:
-                break;
-            case -4:
-                break;
-            case -3:
-                break;
-            case -2:
-                break;
-            case -1:
-                break;
             case 0:
+                PRES_TITLE("Disk Driver")
+                PRES_LINE("Control Communication")
+                PRES_LINE("  Hard coded legacy addresses")
+                PRES_LINE("  PCI bus")
+                PRES_LINE("")
+                PRES_LINE("Data Communication")
+                PRES_LINE("  PIO")
+                PRES_LINE("  DMA")
+                PRES_LINE("")
+                PRES_LINE("Use FAT12 filesystem")
                 break;
+
             case 1:
+                PRES_TITLE("Data Communication")
+                PRES_LINE("PIO")
+                PRES_LINE("  Polled")
+                PRES_LINE("  Slow")
+                PRES_LINE("  16 bits at a time")
+                PRES_LINE("")
+                PRES_LINE("DMA")
+                PRES_LINE("  Physical Region Descriptor Table")
+                PRES_LINE("  Can send directly to memory")
+                PRES_LINE("    used by graphics")
                 break;
+
             case 2:
+                PRES_TITLE("Serial IO")
+                PRES_LINE("Use terminal")
+                PRES_LINE("  Enter commands")
+                PRES_LINE("  Display messages")
+                PRES_LINE("")
+                PRES_LINE("Shell")
+                PRES_LINE("  Parse")
+                PRES_LINE("  Execute")
                 break;
 
             case 3:

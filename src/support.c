@@ -215,6 +215,7 @@ static void init_idt( void ){
 	__install_isr( INT_VEC_KEYBOARD, __default_expected_handler );
 	__install_isr( INT_VEC_TIMER,    __default_expected_handler );
 	__install_isr( INT_VEC_MYSTERY,  __default_mystery_handler );
+	__install_isr( 0x2A, __default_mystery_handler );  //todo no hard code
 }
 
 /*
