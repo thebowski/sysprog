@@ -482,8 +482,7 @@ int32_t user_a(void) {
 
     int body_step = 16;
 
-    int slide = 0;
-    int MAX_SLIDE = 4;
+
 
 
     cleartocolor(&background, back_color);
@@ -523,13 +522,18 @@ int32_t user_a(void) {
 
     char buf[] = " ";
 
+
+    int MAX_SLIDE = 11;
+    int MIN_SLIDE = -14;
+    int slide = MIN_SLIDE;
+
     while (1){
 
         int offset = 0;
         blit(ctx->backbuffer, &background, 0, 0);
 
         switch (slide) {
-            case 0:
+            case -14:
                 blit(ctx->backbuffer, &namecard, 0, 0);
                 text_ex(ctx->backbuffer, &font_white, "Cheman OS", header_x, spacing + projtitle_h / 2, 1);
 
@@ -541,35 +545,145 @@ int32_t user_a(void) {
 
                 text_ex(ctx->backbuffer, &font_white, "Alexander", spacing + namecardsize / 2 + (spacing + namecardsize) * 2, projtitle_h + spacing * 4, 1);
                 text_ex(ctx->backbuffer, &font_white, "Bobowski", spacing + namecardsize / 2 + (spacing + namecardsize) * 2, projtitle_h + spacing * 6, 1);
+                break;
 
+            case -13:
+                PRES_TITLE("Project Goal")
+                PRES_LINE("Display Images")
+                PRES_LINE("")
+                PRES_LINE("Save/Load images to disk")
+                PRES_LINE("")
+                PRES_LINE("Send/Receive images over network")
+                PRES_LINE("")
+                PRES_LINE("Enter commands through terminal")
+                break;
 
+            case -12:
+                PRES_TITLE("Network - 3 Layers")
+                PRES_LINE("User Space")
+                PRES_LINE("  Request port, relinquish port, send")
+                PRES_LINE("    packet, receive packet")
+                PRES_LINE("Operating System")
+                PRES_LINE("  Send packet, assign ports, distribute")
+                PRES_LINE("    received packets")
+                PRES_LINE("Driver")
+                PRES_LINE("  Send packet, receive packet")
+                break;
 
+            case -11:
+                PRES_TITLE("Network - User Space")
+                PRES_LINE("Request and relinquish ports from OS")
+                PRES_LINE(" -Ask for port with port number, pass")
+                PRES_LINE("    receive function pointer")
+                PRES_LINE("Send Packet")
+                PRES_LINE(" -Include port to send over,")
+                PRES_LINE("    destination IP, packet pointer")
+                PRES_LINE("Libraries")
+                PRES_LINE(" -Libraries for creating packets, ICMP")
+                PRES_LINE("    definitely, UDP and TCP planned")
+                break;
 
+            case -10:
+                PRES_TITLE("Network - OS Space")
+                PRES_LINE("OS handles endian conversion,")
+                PRES_LINE("  IP header creation and port verification")
+                PRES_LINE("")
+                PRES_LINE("Contains list of ports and assigns them to")
+                PRES_LINE("  processes, passes received packets to")
+                PRES_LINE("  respective ports")
+                PRES_LINE("")
+                PRES_LINE("Tells network driver to send packets")
+                break;
+
+            case -9:
+                PRES_TITLE("Network - Driver Space")
+                PRES_LINE("Handles setup of the network card")
+                PRES_LINE("")
+                PRES_LINE("Sends packets provided by OS over network")
+                PRES_LINE("")
+                PRES_LINE("Read received packets into circular")
+                PRES_LINE("  then OS distributes them to their")
+                PRES_LINE("  associated processes")
+                //PRES_LINE("345678901234567890123456789012345678901")
+                break;
+
+            case -8:
+                break;
+            case -7:
+                break;
+            case -6:
+                break;
+            case -5:
+                break;
+            case -4:
+                break;
+            case -3:
+                break;
+            case -2:
+                break;
+            case -1:
+                break;
+            case 0:
                 break;
             case 1:
-                PRES_TITLE("Our Stuff")
-                PRES_LINE("- IDE Driver")
-                PRES_LINE("- Graphics Driver")
                 break;
-
             case 2:
-                PRES_TITLE("The Disk")
-                PRES_LINE("Line 1")
-                PRES_LINE("Line 2")
-                PRES_LINE("Line 3")
-                PRES_LINE("Line 4")
-                PRES_LINE("Line 5")
-                PRES_LINE("LINE 6")
-                PRES_LINE("LINE 7")
-                PRES_LINE("LINE 8")
-                PRES_LINE("LINE 9")
                 break;
 
             case 3:
-                PRES_TITLE("Text Output")
-                //PRES_LINE("It has all the goodies.")
-                //PRES_LINE("It's super awesome and stuff.")
-                //PRES_LINE("1234567890123456789012345678901234567890")
+                PRES_TITLE("Graphics")
+                PRES_LINE("Mode 13h VGA")
+                PRES_LINE("")
+                PRES_LINE("Accomplished by real mode bios interrupt")
+                break;
+
+            case 4:
+                PRES_TITLE("Driver Capabilities")
+                PRES_LINE("Resolution of 320x200")
+                PRES_LINE("")
+                PRES_LINE("8 bit indexed color")
+                PRES_LINE("")
+                PRES_LINE("Palette switching -> 18 bits to pick from")
+                PRES_LINE("")
+                PRES_LINE("Vsync")
+                break;
+
+            case 5:
+                PRES_TITLE("Graphics System Structure")
+                PRES_LINE("2 syscall interface")
+                PRES_LINE("  Request a graphics context")
+                PRES_LINE("  Draw context to screen")
+                PRES_LINE("")
+                PRES_LINE("Kernel tab intercept switches between")
+                PRES_LINE("  running graphics contexts")
+                PRES_LINE("")
+                PRES_LINE("User facing library of graphics functions")
+                break;
+
+            case 6:
+                PRES_TITLE("Graphics Library")
+                PRES_LINE("Provides functions for easy manipulation")
+                PRES_LINE("  of graphics")
+                PRES_LINE("")
+                PRES_LINE("putpixel")
+                PRES_LINE("cleartocolor")
+                PRES_LINE("drawline")
+                PRES_LINE("blit")
+                PRES_LINE("text")
+                break;
+
+            case 7:
+                PRES_TITLE("Blit")
+                PRES_LINE("Can draw any rectangular region of source")
+                PRES_LINE("  bitmap to any region of destination")
+                PRES_LINE("")
+                PRES_LINE("Handles clipping")
+                PRES_LINE("")
+                PRES_LINE("Transparency")
+                break;
+
+            case 8:
+                PRES_TITLE("Text")
                 PRES_LINE("text(BITMAP * dst, BITMAP * font,")
                 PRES_LINE("  char * str, int x, int y) {")
                 PRES_LINE("  while (*str) {")
@@ -580,7 +694,29 @@ int32_t user_a(void) {
                 PRES_LINE("}")
                 break;
 
-            case 4:
+            case 9:
+                PRES_TITLE("Fun")
+                PRES_LINE("Turns out VGA palettes are 6 bits per")
+                PRES_LINE("  pixel not 8")
+                PRES_LINE("")
+                PRES_LINE("As the OS grows in size, will statically")
+                PRES_LINE("  allocated structures eventually overlap")
+                PRES_LINE("  VGA memory?")
+                break;
+
+            case 10:
+                PRES_TITLE("Fun")
+                PRES_LINE("Turns out VGA palettes are 6 bits per")
+                PRES_LINE("  pixel not 8")
+                PRES_LINE("")
+                PRES_LINE("As the OS grows in size, will statically")
+                PRES_LINE("  allocated structures eventually overlap")
+                PRES_LINE("  VGA memory?")
+                PRES_LINE("")
+                PRES_LINE("Yes.")
+                break;
+
+            case 11:
                 PRES_TITLE("THE END.")
                 PRES_LINE("Questions?")
                 break;
@@ -600,8 +736,8 @@ int32_t user_a(void) {
             buf[0] = (char) chr;
         }
 
-        if (slide < 0){
-            slide = 0;
+        if (slide < MIN_SLIDE){
+            slide = MIN_SLIDE;
         }
         if (slide > MAX_SLIDE){
             slide = MAX_SLIDE;
