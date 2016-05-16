@@ -13,7 +13,7 @@ packet_t *packet_cpy( packet_t *dest, packet_t *src ){
 	ipv4_addr_cpy( &(dest->header.source_ip), &(src->header.source_ip) );
 	ipv4_addr_cpy( &(dest->header.dest_ip), &(dest->header.dest_ip) );
 
-	for ( int i = 0; i < dest->header.length; ++i ){
+	for ( int i = 0; i < dest->header.length - IP_HEADER_L; ++i ){
 		dest->packet_data[ i ] = src->packet_data[ i ];
 	}
 	return dest;
@@ -21,13 +21,13 @@ packet_t *packet_cpy( packet_t *dest, packet_t *src ){
 
 
 
-ipv4_header_t *new_ip_header( ipv4_header_t *d, ipv4_addr_t dest,
-			      ipv4_addr_t src, byte_t protocol, uint16_t len,
-			      byte_t ttl, uint16_t flags, byte_t dscp,
-			      byte_t ecn ){
-	d->version_ihl = ((IP_VERSION << 4) & 0xF0) | (HEADER_L & 0x0F);
+ipv4_header_t *new_ipv4_header( ipv4_header_t *d, ipv4_addr_t dest,
+				ipv4_addr_t src, byte_t protocol, uint16_t len,
+				byte_t ttl, uint16_t flags, byte_t dscp,
+				byte_t ecn ){
+	d->version_ihl = ((IP_VERSION << 4) & 0xF0) | (IP_HEADER_L & 0x0F);
 	d->dscp_ecn = ((ecn << 6) & 0xC4) | (dscp & 0x3F);
-	d->length = len + HEADER_L*4;
+	d->length = len + IP_HEADER_L*4;
 	d->ident = 0;
 	d->flags_offset = (flags & 0x7) << 13;
 	d->ttl = ttl;

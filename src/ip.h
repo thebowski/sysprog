@@ -6,8 +6,8 @@
 // Header for Internet Protocol
 #define IP_VERSION 4
 // Length of the header in 32-bit integers
-#define HEADER_L 5
-#define MAX_DATA_LENGTH 0xFFFF - HEADER_L
+#define IP_HEADER_L 5
+#define IP_MAX_DATA_LENGTH 0xFFFF - (IP_HEADER_L * 8)
 #define DEFAULT_DSCP 0
 #define DEFAULT_ECN 0
 #define DEFAULT_TTL 64
@@ -36,7 +36,7 @@ typedef struct ip_headers {
 
 typedef struct packet {
 	ipv4_header_t header;
-	byte_t packet_data[ MAX_DATA_LENGTH ];
+	byte_t packet_data[ IP_MAX_DATA_LENGTH ];
 } packet_t;
 
 extern ipv4_addr_t this_ip;
@@ -55,7 +55,7 @@ extern ipv4_addr_t this_ip;
 packet_t *packet_cpy( packet_t *dest, packet_t *src );
 
 /*
-** new_ip_header
+** new_ipv4_header
 **
 ** This function sets all of the fields of an IP header to the values specified
 ** when calling the function
@@ -74,10 +74,10 @@ packet_t *packet_cpy( packet_t *dest, packet_t *src );
 ** Returns:
 **     ip_header_t * ---- Pointer to the header with the fields set
 */
-ipv4_header_t *new_ip_header( ipv4_header_t *d, ipv4_addr_t dest,
-			      ipv4_addr_t src, byte_t protocol, uint16_t len,
-			      byte_t ttl, uint16_t flags, byte_t dscp,
-			      byte_t ecn );
+ipv4_header_t *new_ipv4_header( ipv4_header_t *d, ipv4_addr_t dest,
+				ipv4_addr_t src, byte_t protocol, uint16_t len,
+				byte_t ttl, uint16_t flags, byte_t dscp,
+				byte_t ecn );
 
 /*
 ** ipv4_addr_cpy
