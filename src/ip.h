@@ -1,11 +1,13 @@
 #ifndef _IP_H_
 #define _IP_H_
 
+#include "types.h"
+
 // Header for Internet Protocol
-#define IP_HEADER_LENGTH
-#define MAX_DATA_LENGTH 0xFFFF - ( IP_HEADER_LENGTH );
 #define IP_VERSION 4
+// Length of the header in 32-bit integers
 #define HEADER_L 5
+#define MAX_DATA_LENGTH 0xFFFF - HEADER_L
 #define DEFAULT_DSCP 0
 #define DEFAULT_ECN 0
 #define DEFAULT_TTL 64
@@ -15,7 +17,9 @@
 #define TCP_PROTOCOL 6
 #define UDP_PROTOCOL 17
 
-typedef ipv4_addr_t byte_t[4];
+typedef struct ipv4_addr {
+	byte_t addr[4];
+} ipv4_addr_t;
 
 typedef struct ip_headers {
 	uint8_t version_ihl;
@@ -25,17 +29,17 @@ typedef struct ip_headers {
 	uint16_t flags_offset;
 	uint8_t ttl;
 	uint8_t protocol;
-	uint16_t header_checksum;
+	uint16_t checksum;
 	ipv4_addr_t source_ip;
 	ipv4_addr_t dest_ip;
-} ip_header_t;
+} ipv4_header_t;
 
 typedef struct packet {
-	ip_header_t header;
+	ipv4_header_t header;
 	byte_t packet_data[ MAX_DATA_LENGTH ];
 } packet_t;
 
-extern ip_addr_t this_ip;
+extern ipv4_addr_t this_ip;
 
 /*
 ** packet_cpy
@@ -57,8 +61,9 @@ packet_t *packet_cpy( packet_t *dest, packet_t *src );
 ** when calling the function
 **
 ** Arguments:
-**     ip_header_t *d --- Location of header to modify
+**     ipv4_header_t *d - Location of header to modify
 **     ipv4_addr_t dest - IP address to send the packet to
+**     ipv4_addr_t src -- IP address to put in the source field of the packet
 **     byte_t protocol -- Protocol that the packet data uses (RFC 790)
 **     uint16_t len ----- Length of the packet data.  Size of the header is
 **                        accounted for automatically
@@ -69,11 +74,10 @@ packet_t *packet_cpy( packet_t *dest, packet_t *src );
 ** Returns:
 **     ip_header_t * ---- Pointer to the header with the fields set
 */
-ip_header_t *new_ip_header( ip_header_t *d, ipv4_addr_t dest,
-			    byte_t protocol, uint16_t len,
-			    byte_t ttl = DEFAULT_TTL, uint16_t flags = FLAG_DF,
-			    byte_t dscp = DEFAULT_DSCP, byte_t ecn = DEAULT_ECN
-			    );
+ipv4_header_t *new_ip_header( ipv4_header_t *d, ipv4_addr_t dest,
+			      ipv4_addr_t src, byte_t protocol, uint16_t len,
+			      byte_t ttl, uint16_t flags, byte_t dscp,
+			      byte_t ecn );
 
 /*
 ** ipv4_addr_cpy

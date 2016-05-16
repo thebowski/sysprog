@@ -11,10 +11,10 @@
 # Lists of files
 #
 SYS_C_SRC = clock.c klibc.c process.c queue.c scheduler.c sio.c \
-	stack.c syscall.c system.c
+	stack.c syscall.c system.c ip.c
 
 SYS_C_OBJ = clock.o klibc.o process.o queue.o scheduler.o sio.o \
-	stack.o syscall.o system.o
+	stack.o syscall.o system.o ip.o
 
 SYS_S_SRC = klibs.S
 
@@ -23,9 +23,9 @@ SYS_S_OBJ = klibs.o
 SYS_SRCS = $(SYS_S_SRC) $(SYS_S_SRC)
 SYS_OBJS = $(SYS_S_OBJ) $(SYS_C_OBJ)
 
-USR_C_SRC = ulibc.c user.c
+USR_C_SRC = ulibc.c user.c netconv.c
 
-USR_C_OBJ = ulibc.o user.o
+USR_C_OBJ = ulibc.o user.o netconv.o
 
 USR_S_SRC = ulibs.S
 
