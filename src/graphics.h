@@ -2,15 +2,12 @@
 #define _GRAPHICS_H_
 
 
-
-
-
 typedef struct PALETTE PALETTE;
 typedef struct BITMAP BITMAP;
 
 typedef struct GFX_CONTEXT {
-    BITMAP * backbuffer;
-    PALETTE * palette;
+    BITMAP *backbuffer;
+    PALETTE *palette;
 } GFX_CONTEXT;
 
 
@@ -44,8 +41,9 @@ void blit_ex(BITMAP *dest, BITMAP *src, int dest_x, int dest_y, int src_x, int s
 
 uint8_t get_trans(BITMAP *bmp);
 
-void text(BITMAP * dest, char * str, int x, int y, int centered);
-void text_ex(BITMAP * dest, BITMAP * font_image, char * str, int x, int y, int centered);
+void text(BITMAP *dest, char *str, int x, int y, int centered);
+
+void text_ex(BITMAP *dest, BITMAP *font_image, char *str, int x, int y, int centered);
 
 
 #endif

@@ -23,28 +23,28 @@ void transcopy(register uint8_t *dest, register uint8_t *src, register uint32_t 
     }
 }
 
-void text(BITMAP * dest, char * str, int x, int y, int centered){
+void text(BITMAP *dest, char *str, int x, int y, int centered) {
     text_ex(dest, &font, str, x, y, centered);
 }
 
-void text_ex(BITMAP * dest, BITMAP * font_image, char * str, int x, int y, int centered){
-    if (centered){
-        char * strcpy = str;
+void text_ex(BITMAP *dest, BITMAP *font_image, char *str, int x, int y, int centered) {
+    if (centered) {
+        char *strcpy = str;
         int offset = 0;
-        while (*strcpy){
+        while (*strcpy) {
             offset += 7;
             strcpy++;
         }
         x -= offset / 2;
     }
-    while (*str){
+    while (*str) {
         blit_ex(dest, font_image, x, y, *str * 8, 0, 8, 8);
         str++;
         x += 7;
     }
 }
 
-BITMAP create_bitmap(int width, int height, uint8_t transparent_color, uint8_t *data){
+BITMAP create_bitmap(int width, int height, uint8_t transparent_color, uint8_t *data) {
     BITMAP a = {.width = width,
             .height = height,
             .transparent = transparent_color,

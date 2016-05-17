@@ -5,7 +5,7 @@
 **
 ** Author:	CSCI-452 class of 20155
 **
-** Contributor:
+** Contributor: Matthew Cheman mnc3139
 **
 ** Description:	declarations for user-level library functions
 */
@@ -278,10 +278,18 @@ int32_t swrites( char *buf, int size );
 void prt_status( char *msg, uint32_t stat );
 
 
-//todo
+/*
+** getgfxcontext - gets a graphics context for the user process that calls this
+**
+** draw to the backbuffer BITMAP inside the context and modify the PALETTE before calling the drawscreen() syscall
+*/
 GFX_CONTEXT * getgfxcontext();
 
-//todo
+/*
+** drawscreen - draw process' graphics context to the screen if it is the active context
+**
+** active contexts are determined by the os, they are switched between by pressing tab
+*/
 void drawscreen();
 
 #endif

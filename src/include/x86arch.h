@@ -5,7 +5,7 @@
 **
 ** Author:	Warren R. Carithers
 **
-** Contributor:	K. Reek
+** Contributor:	K. Reek, Matthew Cheman mnc3139
 **
 ** Description:	Definitions of constants and macros for use
 **		with the x86 architecture and registers.
@@ -248,6 +248,7 @@
 #define	INT_VEC_PARALLEL_PORT		0x25
 #define	INT_VEC_FLOPPY_DISK		0x26
 #define	INT_VEC_MYSTERY			0x27
+#define INT_VEC_EJECT_DISK      0x2A
 #define	INT_VEC_MOUSE			0x2c
 
 /*

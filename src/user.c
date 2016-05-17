@@ -168,7 +168,6 @@ uint8_t sprites[2][SPRITE_W * SPRITE_H] =
          }};
 
 
-
 int32_t user_d(void) {
     BITMAP sprite = create_bitmap(SPRITE_W, SPRITE_H, 0, sprites[0]);
 
@@ -180,7 +179,7 @@ int32_t user_d(void) {
     ctx->palette = palette_matt;
 
     int x = 0, y = 0, dir = 0;
-    int sx = 0, sy = 0, sy2=0;
+    int sx = 0, sy = 0, sy2 = 0;
     float sx2 = 0;
     int xdir = 1, ydir = 1;
 
@@ -217,47 +216,47 @@ int32_t user_d(void) {
 
         }
 
-        text(ctx->backbuffer, "HEY THIS IS WORKING.",200,10, 1);
+        text(ctx->backbuffer, "HEY THIS IS WORKING.", 200, 10, 1);
 
         sx += xdir;
         sy += ydir;
 
-        if (sx > 350){
+        if (sx > 350) {
             sx = 350;
             xdir = -1;
         }
-        else if (sx < -50){
+        else if (sx < -50) {
             sx = -50;
             xdir = 1;
         }
-        if (sy > 250){
+        if (sy > 250) {
             sy = 250;
             ydir = -1;
-        } else if (sy < -50){
+        } else if (sy < -50) {
             sy = -50;
             ydir = 1;
         }
 
         sx2 += .5;
-        if (sx2 > 320){
+        if (sx2 > 320) {
             sx2 = -20;
             sy2 += 16;
         }
-        if (sy2 > 200){
+        if (sy2 > 200) {
             sy2 = 0;
         }
 
         blit(ctx->backbuffer, &imatt, 60, 60);
 
         drawline(ctx->backbuffer, 160, 90, x, y, color2++);
-        drawline(ctx->backbuffer, sx, sy, (int)sx2, sy2, color2);
+        drawline(ctx->backbuffer, sx, sy, (int) sx2, sy2, color2);
         drawline(ctx->backbuffer, sx2, sy2, 320 - (int) sx2, 200 - sy2, 255 - color2);
 
         blit(ctx->backbuffer, &sprite, sx, sy);
 
-        blit(ctx->backbuffer, &sprite2, (int)sx2, sy2);
+        blit(ctx->backbuffer, &sprite2, (int) sx2, sy2);
 
-        blit(ctx->backbuffer, &sprite2, 320 - (int)sx2, 200 - sy2);
+        blit(ctx->backbuffer, &sprite2, 320 - (int) sx2, 200 - sy2);
 
         //180?
 
@@ -292,7 +291,6 @@ int32_t user_d(void) {
         drawline(ctx->backbuffer, 280, 40, 320, 40, 0);
 
 
-
         drawscreen();
     }
 
@@ -302,9 +300,8 @@ int32_t user_b(void) {
     GFX_CONTEXT *ctx = getgfxcontext();
 
 
-int color = 0;
-    while (1)
-    {
+    int color = 0;
+    while (1) {
 
         cleartocolor(ctx->backbuffer, color++);
         if (color > 253)
@@ -329,13 +326,13 @@ int32_t user_c(void) {
                 putpixel(ctx->backbuffer, i, j, color++);
 
             }
-            for (int a = 0; a < 200; a+= 2){
+            for (int a = 0; a < 200; a += 2) {
                 putpixel(ctx->backbuffer, 100, a, color);
             }
-            for (int a = 0; a < 200; a+= 4){
+            for (int a = 0; a < 200; a += 4) {
                 putpixel(ctx->backbuffer, 101, a, color);
             }
-            for (int a = 0; a < 200; a+= 8){
+            for (int a = 0; a < 200; a += 8) {
                 putpixel(ctx->backbuffer, 102, a, color);
             }
         }
@@ -362,12 +359,11 @@ int32_t user_e(void) {
 
     GFX_CONTEXT *ctx = getgfxcontext();
 
-    BITMAP jupiter = create_bitmap(320,200,-1,jupiter_image);
+    BITMAP jupiter = create_bitmap(320, 200, -1, jupiter_image);
     ctx->palette = jupiter_palette;
 
-    blit(ctx->backbuffer, &jupiter, 0,0);
-    while (1)
-    {
+    blit(ctx->backbuffer, &jupiter, 0, 0);
+    while (1) {
 
 
         drawscreen();
@@ -377,13 +373,12 @@ int32_t user_e(void) {
 }
 
 
-
 #define PRES_TITLE(str) text_ex(ctx->backbuffer, &font_white, str, header_x, header_y, 1);
 #define PRES_LINE(str) text(ctx->backbuffer, str, body_x, body_y + offset, 0); offset += body_step;
 
 
-
-void draw_card(BITMAP *dest, int dest_x, int dest_y, int w, int h, uint8_t color, uint8_t shadow_color, uint8_t shadow_color_light){
+void draw_card(BITMAP *dest, int dest_x, int dest_y, int w, int h, uint8_t color, uint8_t shadow_color,
+               uint8_t shadow_color_light) {
 
     //card
     for (int y = dest_y; y < dest_y + h; y++) {
@@ -393,11 +388,11 @@ void draw_card(BITMAP *dest, int dest_x, int dest_y, int w, int h, uint8_t color
     }
 
     //shadows
-    for (int x = dest_x + 2; x < dest_x + w + 1; x++){
+    for (int x = dest_x + 2; x < dest_x + w + 1; x++) {
         putpixel(dest, x, dest_y + h, shadow_color);
         putpixel(dest, x, dest_y + h + 1, shadow_color_light);
     }
-    for (int y = dest_y + 2; y < dest_y + h + 1; y++){
+    for (int y = dest_y + 2; y < dest_y + h + 1; y++) {
         putpixel(dest, dest_x + w, y, shadow_color);
         putpixel(dest, dest_x + w + 1, y, shadow_color_light);
     }
@@ -429,7 +424,6 @@ int32_t user_a(void) {
     int bodycard_h = (200 - (spacing * 3) - titlecard_h);
     int bodycard_x = titlecard_x;
     int bodycard_y = (titlecard_h + titlecard_y + spacing);
-
 
 
     GFX_CONTEXT *ctx = getgfxcontext();
@@ -483,13 +477,13 @@ int32_t user_a(void) {
     int body_step = 16;
 
 
-
-
     cleartocolor(&background, back_color);
     cleartocolor(&namecard, back_color);
 
-    draw_card(&background, titlecard_x, titlecard_y, titlecard_w, titlecard_h, title_color, shadow_color, shadow_color_light);
-    draw_card(&background, bodycard_x, bodycard_y, bodycard_w, bodycard_h, body_color, shadow_color, shadow_color_light);
+    draw_card(&background, titlecard_x, titlecard_y, titlecard_w, titlecard_h, title_color, shadow_color,
+              shadow_color_light);
+    draw_card(&background, bodycard_x, bodycard_y, bodycard_w, bodycard_h, body_color, shadow_color,
+              shadow_color_light);
 
 
     int projtitle_h = 120;
@@ -519,7 +513,6 @@ int32_t user_a(void) {
               title_color, shadow_color, shadow_color_light);
 
 
-
     char buf[] = " ";
 
 
@@ -527,7 +520,7 @@ int32_t user_a(void) {
     int MIN_SLIDE = -6;
     int slide = MIN_SLIDE;
 
-    while (1){
+    while (1) {
 
         int offset = 0;
         blit(ctx->backbuffer, &background, 0, 0);
@@ -537,14 +530,20 @@ int32_t user_a(void) {
                 blit(ctx->backbuffer, &namecard, 0, 0);
                 text_ex(ctx->backbuffer, &font_white, "Operating System OS", header_x, spacing + projtitle_h / 2, 1);
 
-                text_ex(ctx->backbuffer, &font_white, "Matthew", spacing + namecardsize / 2, projtitle_h + spacing * 4, 1);
-                text_ex(ctx->backbuffer, &font_white, "Cheman", spacing + namecardsize / 2, projtitle_h + spacing * 6, 1);
+                text_ex(ctx->backbuffer, &font_white, "Matthew", spacing + namecardsize / 2, projtitle_h + spacing * 4,
+                        1);
+                text_ex(ctx->backbuffer, &font_white, "Cheman", spacing + namecardsize / 2, projtitle_h + spacing * 6,
+                        1);
 
-                text_ex(ctx->backbuffer, &font_white, "Neil", spacing + namecardsize / 2 + (spacing + namecardsize), projtitle_h + spacing * 4, 1);
-                text_ex(ctx->backbuffer, &font_white, "Guertin", spacing + namecardsize / 2 + (spacing + namecardsize), projtitle_h + spacing * 6, 1);
+                text_ex(ctx->backbuffer, &font_white, "Neil", spacing + namecardsize / 2 + (spacing + namecardsize),
+                        projtitle_h + spacing * 4, 1);
+                text_ex(ctx->backbuffer, &font_white, "Guertin", spacing + namecardsize / 2 + (spacing + namecardsize),
+                        projtitle_h + spacing * 6, 1);
 
-                text_ex(ctx->backbuffer, &font_white, "Alexander", spacing + namecardsize / 2 + (spacing + namecardsize) * 2, projtitle_h + spacing * 4, 1);
-                text_ex(ctx->backbuffer, &font_white, "Bobowski", spacing + namecardsize / 2 + (spacing + namecardsize) * 2, projtitle_h + spacing * 6, 1);
+                text_ex(ctx->backbuffer, &font_white, "Alexander",
+                        spacing + namecardsize / 2 + (spacing + namecardsize) * 2, projtitle_h + spacing * 4, 1);
+                text_ex(ctx->backbuffer, &font_white, "Bobowski",
+                        spacing + namecardsize / 2 + (spacing + namecardsize) * 2, projtitle_h + spacing * 6, 1);
                 break;
 
             case -5:
@@ -737,23 +736,23 @@ int32_t user_a(void) {
 
         }
 
-        text(ctx->backbuffer, buf,0,0,0);
+        text(ctx->backbuffer, buf, 0, 0, 0);
         drawscreen();
         int chr = c_getchar();
 
 
-        if (chr == '6'){
+        if (chr == '6') {
             slide++;
-        } else if (chr == '4'){
+        } else if (chr == '4') {
             slide--;
         } else {
             buf[0] = (char) chr;
         }
 
-        if (slide < MIN_SLIDE){
+        if (slide < MIN_SLIDE) {
             slide = MIN_SLIDE;
         }
-        if (slide > MAX_SLIDE){
+        if (slide > MAX_SLIDE) {
             slide = MAX_SLIDE;
         }
 

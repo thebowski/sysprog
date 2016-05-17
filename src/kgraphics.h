@@ -46,8 +46,6 @@ struct BITMAP {
 };
 
 
-
-
 struct PALETTE {
     uint8_t data[256 * 3];
 };
@@ -66,7 +64,8 @@ BITMAP font_white;
 
 void _kgfx_next_context(void);
 
-GFX_CONTEXT * _kgfx_new_context(int pid);
+GFX_CONTEXT *_kgfx_new_context(int pid);
+
 void _kgfx_delete_context(int pid);
 
 void _kgfx_load_palette(PALETTE *palette);
