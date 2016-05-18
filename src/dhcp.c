@@ -56,17 +56,17 @@ dhcp_packet_t *dhcp_discover( dhcp_packet_t *dest ){
 	dest->dhcp_data.hlen = 6;
 	dest->dhcp_data.hops = 0;
 	dest->dhcp_data.xid = 0xDEADBEEF;
-	dest->dhcp_data.secs = 0x99;
+	dest->dhcp_data.secs = 0;
 	dest->dhcp_data.flags = DHCP_B_FLAG;
 	dest->dhcp_data.cli_addr = (ipv4_addr_t){.addr={0x01,0x23,0x45,0x67}};
 	dest->dhcp_data.your_ip = (ipv4_addr_t){.addr={0x89,0xab,0xcd, 0xef}};
 	dest->dhcp_data.serv_ip = (ipv4_addr_t){.addr={0x00,0x11,0x22,0x33}};
 	dest->dhcp_data.gate_ip = (ipv4_addr_t){.addr={0x44,0x55,0x66,0x77}};
 	dest->dhcp_data.cookie = 0x63825363;
-	dest->dhcp_data.cli_hw_addr[0] = 0xd;
-	dest->dhcp_data.cli_hw_addr[1] = 0xe;
-	dest->dhcp_data.cli_hw_addr[2] = 0xa;
-	dest->dhcp_data.cli_hw_addr[3] = 0xd;
+	dest->dhcp_data.cli_hw_addr[0] = 0x0;
+	dest->dhcp_data.cli_hw_addr[1] = 0x0;
+	dest->dhcp_data.cli_hw_addr[2] = 0x0;
+	dest->dhcp_data.cli_hw_addr[3] = 0x0;
 	dest->data[0] = DHCP_MESSAGE_TYPE;
 	dest->data[1] = 1;
 	dest->data[2] = DHCP_MESSAGET_DISCOVER;
@@ -77,9 +77,6 @@ dhcp_packet_t *dhcp_discover( dhcp_packet_t *dest ){
 						  &(dest->ip_header.source_ip) );
 
 	return dest;
-}
-
-dhcp_packet_t *dhcp_request( dhcp_packet_t *offer ){
 }
 
 packet_t *dhcp_discover_copy( ){
@@ -95,12 +92,6 @@ void dhcp_data_hton( dhcp_data_t *p ){
 	p->xid = htonl( p->xid );
 	p->secs = htons( p->secs );
 	p->flags = htons( p->flags );
-/*
-	for ( int i = 0; i < CLI_HW_ADDR_L; ++i ){
-		p->cli_hw_addr[i] =
-			htonl( p->cli_hw_addr[i] );
-			}
-*/
 	p->cookie = htonl( p->cookie );
 }
 

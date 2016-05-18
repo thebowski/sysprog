@@ -66,7 +66,25 @@ uint16_t udp_checksum( udp_packet_t *p, ipv4_addr_t *dest,
 */
 uint16_t udp_verify( udp_packet_t *p );
 
+/*
+** udp_header_ntoh
+**
+** Converts the byte order of the fields of the UDP header for network
+** transmission
+**
+** Arguments:
+**     udp_header_t * - Pointer to UDP header to convert
+*/
 void udp_header_ntoh( udp_header_t *h );
+
+/*
+** udp_header_ntoh
+**
+** Converts the byte order of the fields of the UDP header for host parsing
+**
+** Arguments:
+**     udp_header_t * - Pointer to UDP header to convert
+*/
 void udp_header_hton( udp_header_t *h );
 
 #endif

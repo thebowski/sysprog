@@ -68,7 +68,7 @@ void _receive( packet_t *p, uint8_t n ){
 	ports[prev_port].receive( first_packet, count );
 }
 
-void send( packet_t *p, uint8_t n ){
+void _send( packet_t *p, uint8_t n ){
 	// Verify the outgoing IP is correct before sending, then send packets
 	for ( uint8_t i = 0; i < n; ++i ){
 		ipv4_header_ntoh( &(p[i].header) );

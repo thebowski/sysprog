@@ -23,9 +23,8 @@ SYS_S_OBJ = klibs.o
 SYS_SRCS = $(SYS_S_SRC) $(SYS_S_SRC)
 SYS_OBJS = $(SYS_S_OBJ) $(SYS_C_OBJ)
 
-USR_C_SRC = ulibc.c user.c netconv.c
-
-USR_C_OBJ = ulibc.o user.o netconv.o
+USR_C_SRC = ulibc.c user.c netconv.c network_test.c
+USR_C_OBJ = ulibc.o user.o netconv.o network_test.o
 
 USR_S_SRC = ulibs.S
 

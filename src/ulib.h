@@ -275,6 +275,14 @@ int32_t reqport( uint16_t portnum, receive_t rec );
 void relport( uint16_t portnum );
 
 /*
+** send()
+**
+** Send a buffer of packets over the network
+**
+*/
+void send( packet_t *p, uint8_t num );
+
+/*
 ** swrites()
 **
 ** write a sized buffer to the SIO

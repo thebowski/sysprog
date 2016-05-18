@@ -121,7 +121,25 @@ uint16_t ipv4_header_checksum( ipv4_header_t *h );
 */
 uint16_t ipv4_header_verify( ipv4_header_t *h );
 
+/*
+** ipv4_header_hton
+**
+** Converts the byte order of the fields of the IP packet header for network
+** tranmssion
+**
+** Arguments:
+**     ipv4_header_t * - Pointer to ipv4 header to convert
+*/
 void ipv4_header_hton( ipv4_header_t *h );
+
+/*
+** ipv4_header_ntoh
+**
+** Converts the byte order of the fields of the UDP header for host parsing
+**
+** Arguments:
+**     ipv4_header_t * - Pointer to ipv4 header to convert
+*/
 void ipv4_header_ntoh( ipv4_header_t *h );
 
 #endif

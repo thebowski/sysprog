@@ -45,16 +45,47 @@ typedef struct __attribute__((__packed__)) dhcp_packet {
 	byte_t data[ DHCP_DATA_L ];
 } dhcp_packet_t;
 
-
-void dhcp_handshake();
-
+/*
+** dhcp_discover
+**
+** Writes a DHCP packet used to request an IP from DHCP servers
+**
+** Arguments:
+**     dhcp_packet_t *dest - Location to write the packet
+** Returns:
+**     dhcp_packet_t * ----- Location of the written packet
+*/
 dhcp_packet_t *dhcp_discover( dhcp_packet_t *dest );
 
-dhcp_packet_t *dhcp_request( dhcp_packet_t *offer );
-
+/*
+** dhcp_discover_copy
+**
+** Returns a pointer to a pre made DHCP packet that may be used for requesting
+** an IP address from a DHCP server
+**
+** Returns:
+**     dhcp_packet_t * ----- Location of the request packet
+*/
 packet_t *dhcp_discover_copy( );
 
+/*
+** dhcp_data_hton
+**
+** Changes the order of the fields of the DHCP packet for network transmission
+**
+** Arguments:
+**     dhcp_data_t *p - location of the DHCP data object to convert
+*/
 void dhcp_data_hton( dhcp_data_t *p );
+
+/*
+** dhcp_data_hton
+**
+** Changes the order of the fields of the DHCP packet for host parsing
+**
+** Arguments:
+**     dhcp_data_t *p - location of the DHCP data object to convert
+*/
 void dhcp_data_ntoh( dhcp_data_t *p );
 
 #endif

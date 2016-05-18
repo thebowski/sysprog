@@ -290,6 +290,22 @@ static void _sys_relport( pcb_t *pcb ) {
 	_release_port( portnum, pcb->pid );
 }
 
+
+/*
+** _sys_send - Send a buffer of packets over the network.  In this case,
+**             simulated
+**
+** implements:  void send( packet_t *, uint8_t num )
+** returns:     Does not return
+*/
+
+static void _sys_send( pcb_t *pcb ) {
+	packet_t *packet  = (packet_t *)ARG(pcb,1);
+        uint8_t count = ARG(pcb,2);
+
+	_send( packet, count );
+}
+
 static void _sys_sleep( pcb_t *pcb ) {
 	uint32_t sleeptime = ARG(pcb,1);
 
@@ -697,6 +713,7 @@ void _sys_init( void ) {
 	_syscalls[ SYS_gettime ]	= _sys_gettime;
 	_syscalls[ SYS_reqport ]	= _sys_reqport;
 	_syscalls[ SYS_relport ]	= _sys_relport;
+	_syscalls[ SYS_send ]   	= _sys_send;
 
 	// initialize the zombie and waiting queues
 

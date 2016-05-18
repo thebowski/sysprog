@@ -34,8 +34,9 @@
 #define	SYS_gettime	10
 #define SYS_reqport     11
 #define SYS_relport     12
+#define SYS_send        13
 
-#define	N_SYSCALLS	13
+#define	N_SYSCALLS	14
 
 // dummy system call code to test the syscall ISR
 
