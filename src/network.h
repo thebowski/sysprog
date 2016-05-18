@@ -8,8 +8,6 @@
 #define MAX_PORTS 0xFFFF
 #define PACKET_BUF_SIZE 0xFFF
 
-ipv4_addr_t this_ip = {.addr={0,0,0,0}};
-
 packet_t packet_buf[ PACKET_BUF_SIZE ];
 
 /*

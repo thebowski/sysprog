@@ -65,14 +65,14 @@ void _receive( packet_t *p, uint8_t n ){
 	}
 
 	// Make sure you receive all of the the packets
-	ports[prev_port].receive( &first_packet, count );
+	ports[prev_port].receive( first_packet, count );
 }
 
 void send( packet_t *p, uint8_t n ){
 	// Verify the outgoing IP is correct before sending, then send packets
 	for ( uint8_t i = 0; i < n; ++i ){
 		ipv4_header_ntoh( &(p[i].header) );
-		ipv4_addr_cpy( &(p->header.source_ip), &this_ip );
+		ipv4_addr_cpy( &(p->header.source_ip), &(ipv4_addr_t){{0,0,0,0}} );
 		ipv4_header_hton( &(p[i].header) );
 	}
 	//drv_send( (p_t *) p, n );

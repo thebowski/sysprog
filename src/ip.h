@@ -46,8 +46,6 @@ typedef struct pkt {
 
 #pragma pack( pop )
 
-extern ipv4_addr_t this_ip;
-
 /*
 ** packet_cpy
 **
