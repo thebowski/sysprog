@@ -74,3 +74,17 @@ ipv4_addr_t *ipv4_addr_cpy( ipv4_addr_t *dest, ipv4_addr_t *src){
 	dest->addr[3] = src->addr[3];
 	return dest;
 }
+
+void ipv4_header_hton( ipv4_header_t *h ){
+	h->length = htons( h->length );
+	h->ident = htons( h->ident );
+	h->flags_offset = htons( h->flags_offset );
+	h->checksum = htons( h->checksum );
+}
+
+void ipv4_header_ntoh( ipv4_header_t *h ){
+	h->length = ntohs( h->length );
+	h->ident = ntohs( h->ident );
+	h->flags_offset = ntohs( h->flags_offset );
+	h->checksum = ntohs( h->checksum );
+}

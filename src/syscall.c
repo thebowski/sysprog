@@ -25,6 +25,7 @@
 #include "stack.h"
 #include "clock.h"
 #include "sio.h"
+#include "network.h"
 
 /*
 ** PRIVATE DEFINITIONS
@@ -258,6 +259,36 @@ static void _sys_writes( pcb_t *pcb ) {
 ** If the sleep time (in seconds) is 0, just preempts the process; else,
 ** puts it onto the sleep queue for the specified length of time.
 */
+
+
+/*
+** _sys_reqport - ask for a port to be assigned to a process
+**
+** implements:  int32_t reqport(uint16_t portnum,
+**                              (*receive_t)(packet_t[], uint8_t ) );
+** returns:     0 if successful, non-0 if unsuccessful
+*/
+
+static void _sys_reqport( pcb_t *pcb ) {
+	uint16_t portnum = ARG(pcb,1);
+	receive_t receive = (receive_t *)ARG(pcb,2);
+
+	int32_t other_pid = _request_port( portnum, receive, pcb->pid );
+	RET(pcb) = other_pid;
+}
+
+/*
+** _sys_relport - ask for a port to be assigned to a process
+**
+** implements:  int32_t relport( uint16_t portnum )
+** returns:     Does not return
+*/
+
+static void _sys_relport( pcb_t *pcb ) {
+	uint16_t portnum = ARG(pcb,1);
+
+	_release_port( portnum, pcb->pid );
+}
 
 static void _sys_sleep( pcb_t *pcb ) {
 	uint32_t sleeptime = ARG(pcb,1);
@@ -633,6 +664,7 @@ void _sys_kill( pcb_t *pcb ) {
 	}
 }
 
+
 /*
 ** PUBLIC FUNCTIONS
 */
@@ -663,6 +695,8 @@ void _sys_init( void ) {
 	_syscalls[ SYS_getpid ]		= _sys_getpid;
 	_syscalls[ SYS_getppid ]	= _sys_getppid;
 	_syscalls[ SYS_gettime ]	= _sys_gettime;
+	_syscalls[ SYS_reqport ]	= _sys_reqport;
+	_syscalls[ SYS_relport ]	= _sys_relport;
 
 	// initialize the zombie and waiting queues
 

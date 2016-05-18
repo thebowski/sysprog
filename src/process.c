@@ -153,6 +153,14 @@ void _pcb_dealloc( pcb_t *pcb ) {
 
 	pcb->state = PS_UNUSED;
 
+	// Release the ports if they're allocated
+	for ( int i = 0; i < PS_MAX_PORTS; ++i ){
+		if ( pcb->ports[ i ] != 0 ){
+			_release_port( pcb->pid, pcb->ports[ i ] );
+			pcb->ports[ i ] = 0;
+		}
+	}
+
 	// question:  should we clear the other fields here?
 
 	// tuck it away for future use
@@ -218,6 +226,11 @@ void _pcb_dump( const char *which, pcb_t *pcb ) {
 
 	c_printf( " context %08x stack %08x\n",
 		  (uint32_t) pcb->context, (uint32_t) pcb->stack );
+	for (int i = 0; i < PS_MAX_PORTS; ++i ){
+		if ( pcb->ports[ i ] != 0 ){
+			c_printf( "Owns port 0x%x\n", pcb->ports[ i ]);
+		}
+	}
 }
 
 /*

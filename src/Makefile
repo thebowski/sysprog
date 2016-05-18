@@ -11,10 +11,10 @@
 # Lists of files
 #
 SYS_C_SRC = clock.c klibc.c process.c queue.c scheduler.c sio.c \
-	stack.c syscall.c system.c ip.c
+	stack.c syscall.c system.c ip.c network.c udp.c
 
 SYS_C_OBJ = clock.o klibc.o process.o queue.o scheduler.o sio.o \
-	stack.o syscall.o system.o ip.o
+	stack.o syscall.o system.o ip.o network.o udp.o
 
 SYS_S_SRC = klibs.S
 

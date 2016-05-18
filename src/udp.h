@@ -3,6 +3,7 @@
 
 #include "ip.h"
 #include "types.h"
+#include "netconv.h"
 
 #define UDP_HEADER_L 8
 #define UDP_MAX_DATA_LEN 0xFFFF - IP_HEADER_L - UDP_HEADER_L
@@ -64,5 +65,8 @@ uint16_t udp_checksum( udp_packet_t *p, ipv4_addr_t *dest,
 **     uint16_t -------- 0 if valid, non-0 if invalid
 */
 uint16_t udp_verify( udp_packet_t *p );
+
+void udp_header_ntoh( udp_header_t *h );
+void udp_header_hton( udp_header_t *h );
 
 #endif

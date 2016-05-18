@@ -43,3 +43,17 @@ uint16_t udp_verify( udp_packet_t *p ){
 	return udp_checksum( p, &(p->ip_header.dest_ip),
 			     &(p->ip_header.source_ip) );
 }
+
+void udp_header_hton( udp_header_t *h ){
+	h->source_port = htons( h->source_port );
+	h->dest_port = htons( h->dest_port );
+	h->length = htons( h->length );
+	h->checksum = htons( h->checksum );
+}
+
+void udp_header_ntoh( udp_header_t *h ){
+	h->source_port = ntohs( h->source_port );
+	h->dest_port = ntohs( h->dest_port );
+	h->length = ntohs( h->length );
+	h->checksum = ntohs( h->checksum );
+}

@@ -17,6 +17,7 @@
 #define TCP_PROTOCOL 6
 #define UDP_PROTOCOL 17
 
+#pragma pack( push, 1 )
 typedef struct ipv4_addr {
 	byte_t addr[4];
 } ipv4_addr_t;
@@ -38,6 +39,12 @@ typedef struct packet {
 	ipv4_header_t header;
 	byte_t packet_data[ IP_MAX_DATA_LENGTH ];
 } packet_t;
+
+typedef struct pkt {
+	byte_t data[ 0xFFFF ];
+} p_t;
+
+#pragma pack( pop )
 
 extern ipv4_addr_t this_ip;
 
@@ -115,5 +122,8 @@ uint16_t ipv4_header_checksum( ipv4_header_t *h );
 **                        otherwise
 */
 uint16_t ipv4_header_verify( ipv4_header_t *h );
+
+void ipv4_header_hton( ipv4_header_t *h );
+void ipv4_header_ntoh( ipv4_header_t *h );
 
 #endif
