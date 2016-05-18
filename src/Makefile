@@ -11,10 +11,10 @@
 # Lists of files
 #
 SYS_C_SRC = clock.c klibc.c process.c queue.c scheduler.c sio.c \
-	stack.c syscall.c system.c graphics.c kgraphics.c images.c
+	stack.c syscall.c system.c graphics.c kgraphics.c images.c diskdriver.c
 
 SYS_C_OBJ = clock.o klibc.o process.o queue.o scheduler.o sio.o \
-	stack.o syscall.o system.o graphics.o kgraphics.o images.o
+	stack.o syscall.o system.o graphics.o kgraphics.o images.o diskdriver.o
 
 SYS_S_SRC = klibs.S
 
@@ -44,7 +44,7 @@ USR_OBJS = $(USR_S_OBJ) $(USR_C_OBJ)
 #	DUMP_QUEUES		clock ISR dumps queues every 10 seconds
 #	DEBUG			turns on debugging trace output
 #
-USER_OPTIONS = -DDUMP_QUEUES -DCLEAR_BSS_SEGMENT -DISR_DEBUGGING_CODE -DSP_OS_CONFIG
+USER_OPTIONS = -DCLEAR_BSS_SEGMENT -DISR_DEBUGGING_CODE -DSP_OS_CONFIG
 
 #
 # YOU SHOULD NOT NEED TO CHANGE ANYTHING BELOW THIS POINT!!!

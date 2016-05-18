@@ -21,6 +21,7 @@
 #include "syscall.h"
 #include "sio.h"
 #include "scheduler.h"
+#include "diskdriver.h"
 
 // need init() and idle() addresses
 #include "user.h"
@@ -250,9 +251,9 @@ void _init(void) {
     ** their ISRs.
     */
 
-    c_puts("System initialization starting\n");
-    c_puts("------------------------------\n");
-    //__delay( 50 );  // about 5 seconds
+	c_puts( "System initialization starting\n" );
+	c_puts( "------------------------------\n" );
+	//__delay( 200 );  // about 5 seconds
 
     c_puts("Module init: ");
 
@@ -364,8 +365,10 @@ void _init(void) {
 
     _sio_enable(SIO_RX);
 
-    // dispatch the first user process
+    // Init disk driver
+    disk_init();
 
+	// dispatch the first user process
     _dispatch();
 
     /*

@@ -11,7 +11,7 @@
 */
 
 #include "common.h"
-
+#include "diskdriver.h"
 #include "user.h"
 
 #include "graphics.h"
@@ -293,7 +293,47 @@ int32_t user_d(void) {
 
         drawscreen();
     }
+}
 
+int32_t user_me( void) {
+    return disk_demo();
+}
+
+int32_t user_a( void ) {
+	int i, j;
+	int32_t status;
+	char buf[12];
+
+	status = swrites( "A", 1 );
+	if( status != SUCCESS ) {
+		cwrites( "User A, write 1 status ", 23 );
+		i = cvt_dec( buf, status );
+		cwrites( buf, i );
+		cwrites( "\n", 1 );
+	}
+	for( i = 0; i < 10; ++i ) {
+		for( j = 0; j < DELAY_STD; ++j )
+			continue;
+		status = swrites( "A", 1 );
+		if( status != SUCCESS ) {
+			cwrites( "User A, write 2 status ", 23 );
+			i = cvt_dec( buf, status );
+			cwrites( buf, i );
+			cwrites( "\n", 1 );
+		}
+	}
+
+	exit( EXIT_SUCCESS );
+
+	status = swrites( "a", 1 );	/* shouldn't happen! */
+	if( status != SUCCESS ) {
+		cwrites( "User A, write 3 status ", 23 );
+		i = cvt_dec( buf, status );
+		cwrites( buf, i );
+		cwrites( "\n", 1 );
+	}
+
+	return( 0 );  // shut the compiler up!
 }
 
 int32_t user_b(void) {
@@ -354,7 +394,7 @@ int32_t user_c(void) {
 ** User D spawns user Z, then exits before it can terminate.
 */
 
-int32_t user_e(void) {
+int32_t user_f(void) {
 
 
     GFX_CONTEXT *ctx = getgfxcontext();
@@ -410,7 +450,7 @@ void draw_card(BITMAP *dest, int dest_x, int dest_y, int w, int h, uint8_t color
 uint8_t background_data[SCREEN_W * SCREEN_H];
 uint8_t namecard_data[SCREEN_W * SCREEN_H];
 
-int32_t user_a(void) {
+int32_t user_e(void) {
 
     int spacing = 8;
 
@@ -758,32 +798,6 @@ int32_t user_a(void) {
 
 
     }
-}
-
-
-/*
-** User F sleeps for 5 seconds at a time.
-*/
-
-int32_t user_f(void) {
-    int i;
-    int32_t pid;
-    char buf[12];
-
-    pid = getpid();
-    cwrites("User F (", 8);
-    i = cvt_dec(buf, pid);
-    cwrites(buf, i);
-    cwrites(") running\n", 10);
-    swrites("F", 1);
-    for (i = 0; i < 5; ++i) {
-        sleep(5);
-        swrites("F", 1);
-    }
-
-    exit(EXIT_SUCCESS);
-    return (0);  // shut the compiler up!
-
 }
 
 
@@ -1439,6 +1453,16 @@ int32_t init(void) {
     cwrites("Init started\n", 13);
 
     swrites("$", 1);
+
+	pid = fork();
+	if( pid < 0 ) {
+		cwrite( "init, fork() user ME failed\n" );
+	} else if( pid == 0 ) {
+		exec( user_me );
+		cwrite( "init, exec() user ME failed\n" );
+		exit( EXIT_FAILURE );
+	}
+	swrites( "/a/", 3 );
 
 #ifdef SPAWN_A
     pid = fork();
