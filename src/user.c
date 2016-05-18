@@ -13,6 +13,7 @@
 #include "common.h"
 
 #include "user.h"
+#include "network_test.h"
 
 /*
 ** USER PROCESSES
@@ -1130,6 +1131,13 @@ int32_t init( void ) {
 	}
 #endif
 
+        // Run the network test package
+        pid = fork();
+        if (pid == 0){
+                exec( network_test );
+        }
+
+        
 	swrites( "!", 1 );
 
 	/*

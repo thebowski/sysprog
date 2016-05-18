@@ -46,6 +46,8 @@ SYSCALL(sleep)
 SYSCALL(getpid)
 SYSCALL(getppid)
 SYSCALL(gettime)
+SYSCALL(reqport)
+SYSCALL(relport)
 
 // This is a bogus system call; it's here so that we can test
 // our handling of out-of-range syscall codes in the syscall ISR.

@@ -6,8 +6,8 @@
 // Header for Internet Protocol
 #define IP_VERSION 4
 // Length of the header in 32-bit integers
-#define IP_HEADER_L 5
-#define IP_MAX_DATA_LENGTH 0xFFFF - (IP_HEADER_L * 8)
+#define IP_HEADER_L 20
+#define IP_MAX_DATA_LENGTH 0xFFFF - (IP_HEADER_L)
 #define DEFAULT_DSCP 0
 #define DEFAULT_ECN 0
 #define DEFAULT_TTL 64

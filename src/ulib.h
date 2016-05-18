@@ -22,6 +22,7 @@
 #ifndef __SP_ASM__
 
 #include "process.h"
+#include "network.h"
 
 /*
 ** Start of C-only definitions
@@ -258,6 +259,20 @@ int32_t swrite( char *buf );
 */
 
 int32_t cwrites( char *buf, int size );
+
+/*
+** reqport()
+**
+** Request a port
+*/
+int32_t reqport( uint16_t portnum, receive_t rec );
+
+/*
+** relport()
+**
+** Release a port
+*/
+void relport( uint16_t portnum );
 
 /*
 ** swrites()

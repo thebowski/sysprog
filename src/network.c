@@ -73,7 +73,9 @@ void send( packet_t *p, uint8_t n ){
 	for ( uint8_t i = 0; i < n; ++i ){
 		ipv4_header_ntoh( &(p[i].header) );
 		ipv4_addr_cpy( &(p->header.source_ip), &(ipv4_addr_t){{0,0,0,0}} );
+                for (uint8_t b = 0; b < PACKET_DUMP_LEN; ++b){
+                        c_printf("%.2x", ((p_t *)p)->data[b]);
+                }
 		ipv4_header_hton( &(p[i].header) );
 	}
-	//drv_send( (p_t *) p, n );
 }

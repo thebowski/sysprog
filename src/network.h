@@ -4,6 +4,9 @@
 #include "ip.h"
 #include "udp.h"
 #include "icmp.h"
+#include "c_io.h"
+
+#define PACKET_DUMP_LEN 150
 
 #define MAX_PORTS 0xFFFF
 #define PACKET_BUF_SIZE 0xFFF

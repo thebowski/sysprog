@@ -280,7 +280,7 @@ static void _sys_reqport( pcb_t *pcb ) {
 /*
 ** _sys_relport - ask for a port to be assigned to a process
 **
-** implements:  int32_t relport( uint16_t portnum )
+** implements:  void relport( uint16_t portnum )
 ** returns:     Does not return
 */
 
