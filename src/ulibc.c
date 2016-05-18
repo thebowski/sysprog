@@ -161,6 +161,7 @@ int32_t sreadch( void ) {
 */
 
 int32_t cwrite( char *buf ) {
+    return 0;
 	return( writes(CHAN_CONSOLE,buf,strlen(buf)) );
 }
 

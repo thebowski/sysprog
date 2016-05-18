@@ -11,7 +11,7 @@
 */
 
 #include "common.h"
-
+#include "diskdriver.h"
 #include "user.h"
 
 /*
@@ -72,6 +72,10 @@ int32_t user_y( void ); int32_t user_z( void );
 ** the status return from swrites().
 */
 
+int32_t user_me( void) {
+    return disk_demo();
+}
+
 int32_t user_a( void ) {
 	int i, j;
 	int32_t status;
@@ -84,7 +88,7 @@ int32_t user_a( void ) {
 		cwrites( buf, i );
 		cwrites( "\n", 1 );
 	}
-	for( i = 0; i < 30; ++i ) {
+	for( i = 0; i < 10; ++i ) {
 		for( j = 0; j < DELAY_STD; ++j )
 			continue;
 		status = swrites( "A", 1 );
@@ -917,6 +921,16 @@ int32_t init( void ) {
 	cwrites( "Init started\n", 13 );
 
 	swrites( "$", 1 );
+
+	pid = fork();
+	if( pid < 0 ) {
+		cwrite( "init, fork() user ME failed\n" );
+	} else if( pid == 0 ) {
+		exec( user_me );
+		cwrite( "init, exec() user ME failed\n" );
+		exit( EXIT_FAILURE );
+	}
+	swrites( "/a/", 3 );
 
 #ifdef SPAWN_A
 	pid = fork();

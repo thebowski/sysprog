@@ -11,10 +11,10 @@
 # Lists of files
 #
 SYS_C_SRC = clock.c klibc.c process.c queue.c scheduler.c sio.c \
-	stack.c syscall.c system.c
+	stack.c syscall.c system.c diskdriver.c
 
 SYS_C_OBJ = clock.o klibc.o process.o queue.o scheduler.o sio.o \
-	stack.o syscall.o system.o
+	stack.o syscall.o system.o diskdriver.o
 
 SYS_S_SRC = klibs.S
 
@@ -44,7 +44,7 @@ USR_OBJS = $(USR_S_OBJ) $(USR_C_OBJ)
 #	DUMP_QUEUES		clock ISR dumps queues every 10 seconds
 #	DEBUG			turns on debugging trace output
 #
-USER_OPTIONS = -DDUMP_QUEUES -DCLEAR_BSS_SEGMENT -DISR_DEBUGGING_CODE -DSP_OS_CONFIG
+USER_OPTIONS = -DCLEAR_BSS_SEGMENT -DISR_DEBUGGING_CODE -DSP_OS_CONFIG
 
 #
 # YOU SHOULD NOT NEED TO CHANGE ANYTHING BELOW THIS POINT!!!
@@ -55,7 +55,7 @@ USER_OPTIONS = -DDUMP_QUEUES -DCLEAR_BSS_SEGMENT -DISR_DEBUGGING_CODE -DSP_OS_CO
 #
 # We only want to include from the current directory and ~wrc/include
 #
-INCLUDES = -I. -I/home/matthew/programs/sysprog/src/include
+INCLUDES = -I. -Iinclude
 
 #
 # Compilation/assembly/linking commands and options
@@ -209,8 +209,8 @@ depend:
 
 startup.o: bootstrap.h
 isr_stubs.o: bootstrap.h
-c_io.o: c_io.h startup.h support.h /home/matthew/programs/sysprog/src/include
-support.o: startup.h support.h c_io.h /home/matthew/programs/sysprog/src/include
+c_io.o: c_io.h startup.h support.h include
+support.o: startup.h support.h c_io.h include
 support.o: bootstrap.h
 ulibs.o: syscall.h common.h
 ulibc.o: common.h ulib.h process.h stack.h queue.h
