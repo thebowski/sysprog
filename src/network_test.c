@@ -18,7 +18,7 @@ void receive( packet_t buf[], uint8_t size ){
                 for ( int b = 0; b < PACKET_DUMP_LEN; ++b ){
                         if ( b % 4 == 0 ){ c_printf( "   " ); };
                         if ( b % 16 == 0 ){ c_printf( "\n" ); };
-                        c_printf( "%x ", buf[i].packet_data[b] );
+                        c_printf( "%2x ", buf[i].packet_data[b] );
                 }
         }
 }

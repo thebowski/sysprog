@@ -271,7 +271,7 @@ static void _sys_writes( pcb_t *pcb ) {
 
 static void _sys_reqport( pcb_t *pcb ) {
 	uint16_t portnum = ARG(pcb,1);
-	receive_t receive = (receive_t *)ARG(pcb,2);
+	receive_t receive = (receive_t)ARG(pcb,2);
 
 	int32_t other_pid = _request_port( portnum, receive, pcb->pid );
 	RET(pcb) = other_pid;

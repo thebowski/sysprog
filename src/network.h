@@ -5,13 +5,15 @@
 #include "udp.h"
 #include "icmp.h"
 #include "c_io.h"
+#include "netdrv.h"
 
 #define PACKET_DUMP_LEN 150
 
 #define MAX_PORTS 0xFFFF
-#define PACKET_BUF_SIZE 0xFFF
+#define PACKET_BUF_L 0xFFF
 
-packet_t packet_buf[ PACKET_BUF_SIZE ];
+packet_t packet_buf[ PACKET_BUF_L ];
+uint16_t packet_buf_index;
 
 /*
 ** receive_t
@@ -43,6 +45,13 @@ typedef struct port {
 ** for the network card
 */
 port_t ports[ MAX_PORTS ];
+
+/*
+** network_init
+**
+** Initialized the network structures
+*/
+void _network_init( void );
 
 /*
 ** _request_port
@@ -81,7 +90,7 @@ int32_t _release_port( uint16_t port_num, uint32_t pid );
 **                    by the network card
 **     uint8_t n ---- Number of packets in the buffer
 */
-void _receive( packet_t *p, uint8_t n );
+void _receive( packet_t p[], uint8_t n );
 
 /*
 ** _send
@@ -93,6 +102,6 @@ void _receive( packet_t *p, uint8_t n );
 **                    by the network card
 **     uint8_t n ---- Number of packets in the buffer
 */
-void _send( packet_t *p, uint8_t n );
+void _send( packet_t p[], uint8_t n );
 
 #endif

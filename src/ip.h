@@ -17,6 +17,8 @@
 #define TCP_PROTOCOL 6
 #define UDP_PROTOCOL 17
 
+#define MAX_PACKET_L 0xFFFF
+
 #pragma pack( push, 1 )
 typedef struct ipv4_addr {
 	byte_t addr[4];
