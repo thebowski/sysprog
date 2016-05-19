@@ -25,6 +25,7 @@
 #include "stack.h"
 #include "clock.h"
 #include "sio.h"
+#include "diskdriver.h"
 
 /*
 ** PRIVATE DEFINITIONS
@@ -633,6 +634,22 @@ void _sys_kill( pcb_t *pcb ) {
 	}
 }
 
+void _sys_clear_filetable( pcb_t *pcb) {
+    clear_filetable();
+}
+void _sys_write_filename( pcb_t *pcb) {
+    char *filename = (char *) ARG(pcb,1);
+    uint8_t *data = (uint8_t *) ARG(pcb,2);
+    uint16_t size = (uint16_t) ARG(pcb,3);
+    write_filename(filename, data, size);
+}
+void _sys_read_filename( pcb_t *pcb ) {
+    char *filename = (char *) ARG(pcb,1);
+    uint8_t *data = (uint8_t *) ARG(pcb,2);
+    uint16_t size = (uint16_t) ARG(pcb,3);
+    read_filename(filename, data, size);
+}
+
 /*
 ** PUBLIC FUNCTIONS
 */
@@ -663,6 +680,9 @@ void _sys_init( void ) {
 	_syscalls[ SYS_getpid ]		= _sys_getpid;
 	_syscalls[ SYS_getppid ]	= _sys_getppid;
 	_syscalls[ SYS_gettime ]	= _sys_gettime;
+    _syscalls[ SYS_readfile ]   = _sys_read_filename;
+    _syscalls[ SYS_writefile ]  = _sys_write_filename;
+    _syscalls[ SYS_clearfiles ] = _sys_clear_filetable;
 
 	// initialize the zombie and waiting queues
 

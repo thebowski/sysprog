@@ -276,6 +276,10 @@ int32_t swrites( char *buf, int size );
 
 void prt_status( char *msg, uint32_t stat );
 
+void clearfiles( void );
+void readfile( char *filename, uint8_t data[], uint16_t size );
+void writefile( char *filename, uint8_t data[], uint16_t size );
+
 #endif
 
 #endif
