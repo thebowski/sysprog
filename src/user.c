@@ -5,7 +5,7 @@
 **
 ** Author:	CSCI-452 class of 20155
 **
-** Contributor:
+** Contributor: Matthew Cheman mnc3139
 **
 ** Description:	User routines.
 */
@@ -111,12 +111,105 @@ int32_t user_y(void);
 
 int32_t user_z(void);
 
-/*
-** Users A, B, and C are identical, except for the character they
-** print out via swrites().  Each prints its ID, then loops 30
-** times delaying and printing, before exiting.  They also verify
-** the status return from swrites().
-*/
+
+
+
+int32_t user_me( void) {
+    return disk_demo();
+}
+
+int32_t user_a( void ) {
+//	int i, j;
+//	int32_t status;
+//	char buf[12];
+//
+//	status = swrites( "A", 1 );
+//	if( status != SUCCESS ) {
+//		cwrites( "User A, write 1 status ", 23 );
+//		i = cvt_dec( buf, status );
+//		cwrites( buf, i );
+//		cwrites( "\n", 1 );
+//	}
+//	for( i = 0; i < 10; ++i ) {
+//		for( j = 0; j < DELAY_STD; ++j )
+//			continue;
+//		status = swrites( "A", 1 );
+//		if( status != SUCCESS ) {
+//			cwrites( "User A, write 2 status ", 23 );
+//			i = cvt_dec( buf, status );
+//			cwrites( buf, i );
+//			cwrites( "\n", 1 );
+//		}
+//	}
+//
+//	exit( EXIT_SUCCESS );
+//
+//	status = swrites( "a", 1 );	/* shouldn't happen! */
+//	if( status != SUCCESS ) {
+//		cwrites( "User A, write 3 status ", 23 );
+//		i = cvt_dec( buf, status );
+//		cwrites( buf, i );
+//		cwrites( "\n", 1 );
+//	}
+//
+//	return( 0 );  // shut the compiler up!
+}
+
+//cycle screen color
+int32_t user_b(void) {
+    GFX_CONTEXT *ctx = getgfxcontext();
+
+
+    int color = 0;
+    while (1) {
+
+        cleartocolor(ctx->backbuffer, color++);
+        if (color > 253)
+            color = 0;
+
+        drawscreen();
+    }
+}
+
+//draw a pixel grid
+int32_t user_c(void) {
+    GFX_CONTEXT *ctx = getgfxcontext();
+
+
+    while (1) {
+
+        cleartocolor(ctx->backbuffer, 16);
+
+
+        char color = 0;
+        for (int j = 0; j < 240; j += 16) {
+            for (int i = 0; i < 320; i += 16) {
+                putpixel(ctx->backbuffer, i, j, color++);
+
+            }
+            for (int a = 0; a < 200; a += 2) {
+                putpixel(ctx->backbuffer, 100, a, color);
+            }
+            for (int a = 0; a < 200; a += 4) {
+                putpixel(ctx->backbuffer, 101, a, color);
+            }
+            for (int a = 0; a < 200; a += 8) {
+                putpixel(ctx->backbuffer, 102, a, color);
+            }
+        }
+
+        for (int j = 0; j < 16; j++) {
+            for (int i = 0; i < 16; i++) {
+                putpixel(ctx->backbuffer, 40 + i, 40 + j, i + j * 16);
+            }
+
+        }
+
+        text(ctx->backbuffer, "Hello World!", 100, 100, 0);
+
+        drawscreen();
+    }
+}
 
 #define SPRITE_W 20
 #define SPRITE_H 20
@@ -167,7 +260,7 @@ uint8_t sprites[2][SPRITE_W * SPRITE_H] =
                          "||||||||||||||||||||"
          }};
 
-
+//use every graphics function
 int32_t user_d(void) {
     BITMAP sprite = create_bitmap(SPRITE_W, SPRITE_H, 0, sprites[0]);
 
@@ -295,105 +388,7 @@ int32_t user_d(void) {
     }
 }
 
-int32_t user_me( void) {
-    return disk_demo();
-}
-
-int32_t user_a( void ) {
-	int i, j;
-	int32_t status;
-	char buf[12];
-
-	status = swrites( "A", 1 );
-	if( status != SUCCESS ) {
-		cwrites( "User A, write 1 status ", 23 );
-		i = cvt_dec( buf, status );
-		cwrites( buf, i );
-		cwrites( "\n", 1 );
-	}
-	for( i = 0; i < 10; ++i ) {
-		for( j = 0; j < DELAY_STD; ++j )
-			continue;
-		status = swrites( "A", 1 );
-		if( status != SUCCESS ) {
-			cwrites( "User A, write 2 status ", 23 );
-			i = cvt_dec( buf, status );
-			cwrites( buf, i );
-			cwrites( "\n", 1 );
-		}
-	}
-
-	exit( EXIT_SUCCESS );
-
-	status = swrites( "a", 1 );	/* shouldn't happen! */
-	if( status != SUCCESS ) {
-		cwrites( "User A, write 3 status ", 23 );
-		i = cvt_dec( buf, status );
-		cwrites( buf, i );
-		cwrites( "\n", 1 );
-	}
-
-	return( 0 );  // shut the compiler up!
-}
-
-int32_t user_b(void) {
-    GFX_CONTEXT *ctx = getgfxcontext();
-
-
-    int color = 0;
-    while (1) {
-
-        cleartocolor(ctx->backbuffer, color++);
-        if (color > 253)
-            color = 0;
-
-        drawscreen();
-    }
-}
-
-int32_t user_c(void) {
-    GFX_CONTEXT *ctx = getgfxcontext();
-
-
-    while (1) {
-
-        cleartocolor(ctx->backbuffer, 16);
-
-
-        char color = 0;
-        for (int j = 0; j < 240; j += 16) {
-            for (int i = 0; i < 320; i += 16) {
-                putpixel(ctx->backbuffer, i, j, color++);
-
-            }
-            for (int a = 0; a < 200; a += 2) {
-                putpixel(ctx->backbuffer, 100, a, color);
-            }
-            for (int a = 0; a < 200; a += 4) {
-                putpixel(ctx->backbuffer, 101, a, color);
-            }
-            for (int a = 0; a < 200; a += 8) {
-                putpixel(ctx->backbuffer, 102, a, color);
-            }
-        }
-
-        for (int j = 0; j < 16; j++) {
-            for (int i = 0; i < 16; i++) {
-                putpixel(ctx->backbuffer, 40 + i, 40 + j, i + j * 16);
-            }
-
-        }
-
-        text(ctx->backbuffer, "Hello World!", 100, 100, 0);
-
-        drawscreen();
-    }
-}
-
-/*
-** User D spawns user Z, then exits before it can terminate.
-*/
-
+//display a full screen image
 int32_t user_f(void) {
 
 
@@ -412,11 +407,11 @@ int32_t user_f(void) {
 
 }
 
-
+//for presentation convenience
 #define PRES_TITLE(str) text_ex(ctx->backbuffer, &font_white, str, header_x, header_y, 1);
 #define PRES_LINE(str) text(ctx->backbuffer, str, body_x, body_y + offset, 0); offset += body_step;
 
-
+//used by presentation
 void draw_card(BITMAP *dest, int dest_x, int dest_y, int w, int h, uint8_t color, uint8_t shadow_color,
                uint8_t shadow_color_light) {
 
@@ -441,15 +436,13 @@ void draw_card(BITMAP *dest, int dest_x, int dest_y, int w, int h, uint8_t color
     putpixel(dest, dest_x + 2, dest_y + h, shadow_color_light);
 }
 
-/*
-** Users E, F, and G test the sleep facility.
-**
-** User E sleeps for 10 seconds at a time.
-*/
-
 uint8_t background_data[SCREEN_W * SCREEN_H];
 uint8_t namecard_data[SCREEN_W * SCREEN_H];
 
+/*
+ * presentation
+ * use left and right arrow keys to move through slides, press any other key to display that character in upper left
+ */
 int32_t user_e(void) {
 
     int spacing = 8;
@@ -1076,7 +1069,6 @@ int32_t user_p(void) {
     return (0);  // shut the compiler up!
 
 }
-
 
 /*
 ** User Q does a bogus system call

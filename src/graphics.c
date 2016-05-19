@@ -1,3 +1,15 @@
+/*
+** SCCS ID:	%W%	%G%
+**
+** File:	graphics.h
+**
+** Author:	Matthew Cheman mnc3139
+**
+** Contributor:
+**
+** Description:	Graphics functions
+*/
+
 #include "common.h"
 
 #include "kgraphics.h"
@@ -44,7 +56,7 @@ void text_ex(BITMAP *dest, BITMAP *font_image, char *str, int x, int y, int cent
     }
 }
 
-BITMAP create_bitmap(int width, int height, uint8_t transparent_color, uint8_t *data) {
+BITMAP create_bitmap(int width, int height, int transparent_color, uint8_t *data) {
     BITMAP a = {.width = width,
             .height = height,
             .transparent = transparent_color,
@@ -53,35 +65,7 @@ BITMAP create_bitmap(int width, int height, uint8_t transparent_color, uint8_t *
     return a;
 }
 
-
-//BITMAP create_subbitmap(BITMAP * src, int x, int y, int width, int height){
-//    if (x < 0 ||
-//        y < 0 ||
-//        width < 0 ||
-//        height < 0 ||
-//        x + width > src->width ||
-//        y + height > src->height
-//            )
-//    {
-//        vsync();
-//        cleartocolor(screen, 10);
-//        vsync();
-//        vsync();
-//
-//        _kpanic("create_subbitmap", "subbitmap larger than parent");
-//    }
-//
-//
-//    BITMAP a = *src;
-//    a.sub_x = x;
-//    a.sub_y = y;
-//    a.sub_w = width;
-//    a.sub_h = height;
-//
-//    return a;
-//}
-
-uint8_t get_trans(BITMAP *bmp) {
+int get_trans(BITMAP *bmp) {
     return bmp->transparent;
 }
 

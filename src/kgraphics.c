@@ -1,13 +1,13 @@
 /*
 ** SCCS ID:	%W%	%G%
 **
-** File:	?
+** File:	kgraphics.c
 **
-** Author:	CSCI-452 class of 20155
+** Author:	Matthew Cheman mnc3139
 **
 ** Contributor:
 **
-** Description:	?
+** Description:	Kernel graphics functions for managing vga driver
 */
 
 #define    __SP_KERNEL__
@@ -24,7 +24,7 @@
 */
 
 #define  MAX_CONTEXTS 10
-
+#define  GUARD_BUFFER_SIZE 0x1000000
 /*
 ** PRIVATE DATA TYPES
 */
@@ -33,7 +33,7 @@
 /*
 ** PRIVATE GLOBAL VARIABLES
 */
-#define GUARD_BUFFER_SIZE 0x1000000
+
 
 char guardbuffera[GUARD_BUFFER_SIZE];
 
@@ -109,7 +109,7 @@ void _kgfx_init(void) {
     num_contexts = 0;
 
     screen = create_bitmap(SCREEN_W, SCREEN_H, -1, (uint8_t *)VGA_START);
-    font = create_bitmap(1024, 8, -1, font_data);
+    font = create_bitmap(1024, 8, 255, font_data);
 
     for (int i = 0; i < FONT_BYTES; i++) {
         font_data_white[i] = font_data[i] == 255 ? 0 : 1;
@@ -163,14 +163,10 @@ GFX_CONTEXT *_kgfx_new_context(int pid) {
             }
         }
     }
-    if (context == -1) {
-        //panic
-    }
 
     _kmemclr(contexts[context].backbuffer->data, VGA_SIZE);
     _kmemcpy((uint8_t *)&palettes[context], (uint8_t *)&default_palette, PALETTE_SIZE);
 
-    //active_context = context;
 
     return &contexts[context];
 
@@ -198,13 +194,12 @@ void _kgfx_load_palette(PALETTE *palette) {
 }
 
 void vsync() {
-    /* wait until any previous retrace has ended */
+    //wait for vertical sync to end then just start
     do {
-    } while (__inb(0x3DA) & 8);
+    } while (__inb(VGA_PORT_VSYNC) & 8);
 
-    /* wait until a new retrace has just begun */
     do {
-    } while (!(__inb(0x3DA) & 8));
+    } while (!(__inb(VGA_PORT_VSYNC) & 8));
 
 }
 
