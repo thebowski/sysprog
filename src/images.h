@@ -1,6 +1,14 @@
-//
-// Created by matthew on 5/5/16.
-//
+/*
+** SCCS ID:	%W%	%G%
+**
+** File:	images.h
+**
+** Author:	Matthew Cheman mnc3139
+**
+** Contributor:
+**
+** Description:	images for testing purposes
+*/
 
 #ifndef SRC_IMAGES_H
 #define SRC_IMAGES_H

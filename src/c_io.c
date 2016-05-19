@@ -5,7 +5,7 @@
 **
 ** Author:	K. Reek
 **
-** Contributor:	Jon Coles, Warren R. Carithers
+** Contributor:	Jon Coles, Warren R. Carithers, Matthew Cheman mnc3139
 **
 ** Description:	Console I/O routines
 **
