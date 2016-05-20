@@ -40,28 +40,28 @@
 */
 //	user	          baseline system calls in use
 //		   exit rdch wrts fork exec wait kill slep gpid gppd gtim
-#define	SPAWN_A	//  X    .    X    .    .    .    .    .    .    .    .
-#define	SPAWN_B	//  X    .    X    .    .    .    .    .    .    .    .
-#define	SPAWN_C	//  X    .    X    .    .    .    .    .    .    .    .
-#define	SPAWN_D	//  X    .    X    X    X    .    .    .    .    .    .
-#define	SPAWN_E	//  X    .    X    .    .    .    .    X    X    .    .
-#define	SPAWN_F	//  X    .    X    .    .    .    .    X    X    .    .
-#define	SPAWN_G	//  X    .    X    .    .    .    .    X    X    .    .
-#define	SPAWN_H	//  .    .    X    .    .    .    .    .    .    .    .
+//#define	SPAWN_A	//  X    .    X    .    .    .    .    .    .    .    .
+//#define	SPAWN_B	//  X    .    X    .    .    .    .    .    .    .    .
+//#define	SPAWN_C	//  X    .    X    .    .    .    .    .    .    .    .
+//#define	SPAWN_D	//  X    .    X    X    X    .    .    .    .    .    .
+//#define	SPAWN_E	//  X    .    X    .    .    .    .    X    X    .    .
+//#define	SPAWN_F	//  X    .    X    .    .    .    .    X    X    .    .
+//#define	SPAWN_G	//  X    .    X    .    .    .    .    X    X    .    .
+//#define	SPAWN_H	//  .    .    X    .    .    .    .    .    .    .    .
  //skipping user I
-#define	SPAWN_J	//  X    .    X    X    X    .    .    .    .    .    .
-#define	SPAWN_K	//  X    .    X    X    X    .    .    X    .    .    .
-#define	SPAWN_L	//  X    .    X    X    X    .    .    X    .    .    X
-#define	SPAWN_M	//  X    .    X    X    X    .    .    .    .    .    .
-#define	SPAWN_N	//  X    .    X    X    X    .    .    .    .    .    .
+//#define	SPAWN_J	//  X    .    X    X    X    .    .    .    .    .    .
+//#define	SPAWN_K	//  X    .    X    X    X    .    .    X    .    .    .
+//#define	SPAWN_L	//  X    .    X    X    X    .    .    X    .    .    X
+//#define	SPAWN_M	//  X    .    X    X    X    .    .    .    .    .    .
+//#define	SPAWN_N	//  X    .    X    X    X    .    .    .    .    .    .
  //skipping user O
-#define	SPAWN_P	//  X    .    X    .    .    .    .    X    .    .    X
-#define	SPAWN_Q	//  X    .    X    .    .    .    .    .    .    .    .
+//#define	SPAWN_P	//  X    .    X    .    .    .    .    X    .    .    X
+//#define	SPAWN_Q	//  X    .    X    .    .    .    .    .    .    .    .
 		 //user Q also makes a bogus system call
-#define	SPAWN_R	//  X    X    X    .    .    .    .    X    .    .    .
-#define	SPAWN_S	//  X    .    X    .    .    .    .    X    .    .    .
-#define	SPAWN_T	//  X    .    X    X    X    X    .    X    .    .    .
-#define	SPAWN_U	//  X    .    X    X    X    X    X    X    .    .    .
+//#define	SPAWN_R	//  X    X    X    .    .    .    .    X    .    .    .
+//#define	SPAWN_S	//  X    .    X    .    .    .    .    X    .    .    .
+//#define	SPAWN_T	//  X    .    X    X    X    X    .    X    .    .    .
+//#define	SPAWN_U	//  X    .    X    X    X    X    X    X    .    .    .
 // no user V
 
 /*

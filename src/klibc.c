@@ -62,6 +62,7 @@ void _put_char_or_code(int ch) {
 */
 
 int _khandlekey(char code) {
+    return 0;
     if (code == '\t') {
         _kgfx_next_context();
         return 1;

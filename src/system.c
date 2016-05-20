@@ -222,7 +222,7 @@ void _zombify(pcb_t *pcb, uint32_t status) {
 void _init(void) {
     pcb_t *pcb;
 
-    _kgfx_init();
+    //_kgfx_init();
 
     /*
     ** BOILERPLATE CODE - taken from basic framework

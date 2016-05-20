@@ -398,8 +398,8 @@ boot_sig:
 switch:
 
 	//Enter vga 13h graphics mode
-	movl	$0x13,%ax
-	int	$0x10
+	//movl	$0x13,%ax
+	//int	$0x10
 
 	cli
 	movb	$0x80, %al	/* disable NMIs */

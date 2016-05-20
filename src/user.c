@@ -116,7 +116,7 @@ int32_t user_z(void);
 
 
 int32_t user_me( void) {
-    //return disk_demo();
+    return disk_demo();
     return 0;
 }
 
