@@ -8,6 +8,7 @@
 #define UDP_HEADER_L 8
 #define UDP_MAX_DATA_LEN 0xFFFF - IP_HEADER_L - UDP_HEADER_L
 
+#pragma pack( push, 1 )
 typedef struct udp_header {
 	uint16_t source_port;
 	uint16_t dest_port;
@@ -15,12 +16,12 @@ typedef struct udp_header {
 	uint16_t checksum;
 } udp_header_t;
 
-typedef struct udp_packet {
+typedef struct  udp_packet {
 	ipv4_header_t ip_header;
 	udp_header_t udp_header;
 	byte_t data[ UDP_MAX_DATA_LEN ];
 } udp_packet_t;
-
+#pragma pack( pop )
 /*
 ** new_udp_header
 **
@@ -78,7 +79,7 @@ uint16_t udp_verify( udp_packet_t *p );
 void udp_header_ntoh( udp_header_t *h );
 
 /*
-** udp_header_ntoh
+** udp_header_htoh
 **
 ** Converts the byte order of the fields of the UDP header for host parsing
 **

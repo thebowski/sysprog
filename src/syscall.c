@@ -300,6 +300,7 @@ static void _sys_relport( pcb_t *pcb ) {
 */
 
 static void _sys_send( pcb_t *pcb ) {
+        c_printf( "Entered syscall send routine\n" );
 	packet_t *packet  = (packet_t *)ARG(pcb,1);
         uint8_t count = ARG(pcb,2);
 

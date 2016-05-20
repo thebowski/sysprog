@@ -1,4 +1,6 @@
 #include "network.h"
+#include "syscall.h"
+
 
 void network_init( void ){
         packet_buf_index = 0;
@@ -32,7 +34,7 @@ int32_t _release_port( uint16_t port_num, uint32_t pid ){
         }
 }
 
-void _receive( packet_t *p, uint8_t n ){
+void _receive( packet_t p[], uint8_t n ){
         // Keep track of the first packet in the string of received packets
         // to the same port
         packet_t *first_packet = p;
@@ -48,28 +50,45 @@ void _receive( packet_t *p, uint8_t n ){
 
                 ipv4_header_ntoh( &(p[i].header) );
 
+		uint16_t port = 0;
+
                 if ( p->header.protocol == UDP_PROTOCOL ){
                         // Interpret the packet as a UDP packet
                         udp_packet_t *u =  (udp_packet_t *)(&p[i]);
                         udp_header_ntoh( &(u->udp_header) );
 
                         // Determine the port
-                        uint16_t port = u->udp_header.dest_port;
-                        if ( port == prev_port ){
-                                // If its the same as the last packet, keep
-                                // track of how many in a row that is
-                                count++;
-                        } else {
-                                // if not, call the port's receive function
-                                ports[prev_port].receive( first_packet, count );
-                                first_packet = &p[i];
-                                count = 1;
-                        }
+                        port = u->udp_header.dest_port;
+			if ( prev_port == 0 ){
+			        prev_port = port;
+			}
+			udp_header_hton( &(u->udp_header) );
                 }
-        }
 
-        // Make sure you receive all of the the packets
-        ports[prev_port].receive( first_packet, count );
+                ipv4_header_hton( &(p[i].header) );
+
+		if ( port == prev_port ){
+	        	  // If its the same as the last packet, keep
+         		  // track of how many in a row that is
+		          count++;
+		} else {
+		          // if not, call the port's receive function
+			  if ( ports[ prev_port ].owner_pid != 0 ){
+     			          ports[prev_port].receive( first_packet, count );
+				  first_packet = &p[i];
+			  } else {
+			    // Ignore the packet, no one to send it to
+			  }
+		          count = 1;
+			  prev_port = port;
+		}
+
+        }
+	if ( ports[ prev_port ].owner_pid != 0 ){
+		ports[prev_port].receive( first_packet, count );
+	} else {
+	  // Ignore the packet, no one to send it to
+	}
 }
 
 void _send( packet_t p[], uint8_t n ){
@@ -81,7 +100,7 @@ void _send( packet_t p[], uint8_t n ){
                         packet_buf_index++;
                 } else {
                         _dev_send( &( p[ first_index ] ),
-                                   packet_buf_index - first_index + 1 );
+                                   packet_buf_index - first_index);
                         packet_buf_index = 0;
                         first_index = packet_buf_index;
                 }

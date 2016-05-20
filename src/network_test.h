@@ -2,8 +2,9 @@
 #define _NETWORK_TEST_H_
 
 #define SEND_PORT 0xFEED
-#define DEST_PORT 0xDEAF
-#define TEST_BUF_L 2
+#define DEST_PORT 0xFEED
+#define TEST_BUF_L 3
+#define PACKET_DUMP_LEN 16
 
 #include "c_io.h"
 #include "network.h"

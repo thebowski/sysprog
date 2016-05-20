@@ -7,8 +7,6 @@
 #include "c_io.h"
 #include "netdrv.h"
 
-#define PACKET_DUMP_LEN 150
-
 #define MAX_PORTS 0xFFFF
 #define PACKET_BUF_L 0xFFF
 
