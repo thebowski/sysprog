@@ -6,7 +6,7 @@
 ** Author:	Jon Coles
 **		copyleft 1999 Jon Coles
 **
-** Contributor:	Warren R. Carithers, K. Reek, Garrett C. Smith
+** Contributor:	Warren R. Carithers, K. Reek, Garrett C. Smith, Matthew Cheman mnc3139
 **
 ** Description:	Bootstrap routine.
 **
@@ -396,6 +396,11 @@ boot_sig:
 */
 
 switch:
+
+	//Enter vga 13h graphics mode
+	movl	$0x13,%ax
+	int	$0x10
+
 	cli
 	movb	$0x80, %al	/* disable NMIs */
 	outb	%al, $0x70

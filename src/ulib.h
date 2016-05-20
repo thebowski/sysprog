@@ -5,7 +5,7 @@
 **
 ** Author:	CSCI-452 class of 20155
 **
-** Contributor:
+** Contributor: Matthew Cheman mnc3139
 **
 ** Description:	declarations for user-level library functions
 */
@@ -22,6 +22,7 @@
 #ifndef __SP_ASM__
 
 #include "process.h"
+#include "kgraphics.h"
 
 /*
 ** Start of C-only definitions
@@ -276,9 +277,29 @@ int32_t swrites( char *buf, int size );
 
 void prt_status( char *msg, uint32_t stat );
 
+
+/*
+ * clearfiles - remove all existing filenames from filetable
+ * readfile - read [size] bytes of data from file [filename] into [data]
+ * writefile - write [size] bytes of data from [data] into file [filename]
+ */
 void clearfiles( void );
 void readfile( char *filename, uint8_t data[], uint16_t size );
 void writefile( char *filename, uint8_t data[], uint16_t size );
+
+/*
+** getgfxcontext - gets a graphics context for the user process that calls this
+**
+** draw to the backbuffer BITMAP inside the context and modify the PALETTE before calling the drawscreen() syscall
+*/
+GFX_CONTEXT * getgfxcontext();
+
+/*
+** drawscreen - draw process' graphics context to the screen if it is the active context
+**
+** active contexts are determined by the os, they are switched between by pressing tab
+*/
+void drawscreen();
 
 #endif
 

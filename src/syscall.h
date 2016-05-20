@@ -5,7 +5,7 @@
 **
 ** Author:	CSCI-452 class of 20155
 **
-** Contributor:
+** Contributor: Matthew Cheman mnc3139
 **
 ** Description:	system call declarations
 */
@@ -32,12 +32,13 @@
 #define	SYS_getpid	8
 #define	SYS_getppid	9
 #define	SYS_gettime	10
-
 #define SYS_readfile 11
 #define SYS_writefile 12
 #define SYS_clearfiles 13
+#define SYS_getgfxcontext 14
+#define SYS_drawscreen 15
 
-#define	N_SYSCALLS	14
+#define	N_SYSCALLS	16
 
 // dummy system call code to test the syscall ISR
 

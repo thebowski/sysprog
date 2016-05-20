@@ -361,12 +361,12 @@ int strcmp( char *s1, char *s2 ){
 }
 
 // Interrupts that appeared and should be ignored
-static void __diskdriver_06_isr( int vector, int code ){
+void __diskdriver_06_isr( int vector, int code ){
     //c_printf("Unknown 06 interrupt\n");
 }
-static void __diskdriver_0d_isr( int vector, int code ){
+void __diskdriver_0d_isr( int vector, int code ){
     c_printf("Unknown 0d interrupt\n");
 }
-static void __diskdriver_2e_isr( int vector, int code ){
+void __diskdriver_2e_isr( int vector, int code ){
     c_printf("Unknown 2e interrupt\n");
 }

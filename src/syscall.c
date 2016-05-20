@@ -5,12 +5,12 @@
 **
 ** Author:	CSCI-452 class of 20155
 **
-** Contributor:
+** Contributor: Matthew Cheman mnc3139
 **
 ** Description:	implementation of system call module
 */
 
-#define	__SP_KERNEL__
+#define    __SP_KERNEL__
 
 #include "common.h"
 
@@ -26,6 +26,7 @@
 #include "clock.h"
 #include "sio.h"
 #include "diskdriver.h"
+#include "kgraphics.h"
 
 /*
 ** PRIVATE DEFINITIONS
@@ -44,14 +45,14 @@
 // initialized by _sys_init() to ensure that the
 // code::function mappings are correct
 
-static void (*_syscalls[N_SYSCALLS])( pcb_t *pcb );
+static void (*_syscalls[N_SYSCALLS])(pcb_t *pcb);
 
 /*
 ** PUBLIC GLOBAL VARIABLES
 */
 
-queue_t _zombie;	// "zombie" processes
-queue_t _waiting;	// "waiting for child" processes
+queue_t _zombie;    // "zombie" processes
+queue_t _waiting;    // "waiting for child" processes
 
 /*
 ** PRIVATE FUNCTIONS
@@ -69,31 +70,31 @@ queue_t _waiting;	// "waiting for child" processes
 ** that routine to assign all return values for the call.
 */
 
-static void _sys_isr( int vector, int code ) {
-	uint32_t syscode;
-	
-	// retrieve the syscall code
+static void _sys_isr(int vector, int code) {
+    uint32_t syscode;
 
-	syscode = REG( _current, eax );
+    // retrieve the syscall code
 
-	// verify that it's valid
+    syscode = REG(_current, eax);
 
-	if( syscode >= N_SYSCALLS ) {
+    // verify that it's valid
 
-		// nope!  fake it to be exit(EXIT_BAD_CODE)
+    if (syscode >= N_SYSCALLS) {
 
-		syscode = SYS_exit;
-		ARG(_current,1) = EXIT_BAD_CODE;
+        // nope!  fake it to be exit(EXIT_BAD_CODE)
 
-	}
-	
-	// invoke the appropriate handler
+        syscode = SYS_exit;
+        ARG(_current, 1) = EXIT_BAD_CODE;
 
-	_syscalls[syscode]( _current );
-	
-	// tell the PIC we're done
+    }
 
-	__outb( PIC_MASTER_CMD_PORT, PIC_EOI );
+    // invoke the appropriate handler
+
+    _syscalls[syscode](_current);
+
+    // tell the PIC we're done
+
+    __outb(PIC_MASTER_CMD_PORT, PIC_EOI);
 }
 
 /*
@@ -116,8 +117,8 @@ static void _sys_isr( int vector, int code ) {
 **      the process' pid
 */
 
-static void _sys_getpid( pcb_t *pcb ) {
-        RET(pcb) = pcb->pid;
+static void _sys_getpid(pcb_t *pcb) {
+    RET(pcb) = pcb->pid;
 }
 
 /*
@@ -129,8 +130,8 @@ static void _sys_getpid( pcb_t *pcb ) {
 **      the process' parent's pid
 */
 
-static void _sys_getppid( pcb_t *pcb ) {
-        RET(pcb) = pcb->ppid;
+static void _sys_getppid(pcb_t *pcb) {
+    RET(pcb) = pcb->ppid;
 }
 
 /*
@@ -142,8 +143,8 @@ static void _sys_getppid( pcb_t *pcb ) {
 **      the current system time
 */
 
-static void _sys_gettime( pcb_t *pcb ) {
-        RET(pcb) = _system_time;
+static void _sys_gettime(pcb_t *pcb) {
+    RET(pcb) = _system_time;
 }
 
 /*
@@ -157,56 +158,56 @@ static void _sys_gettime( pcb_t *pcb ) {
 **	the character
 */
 
-static void _sys_readch( pcb_t *pcb ) {
-	int ch;
-	int chan = ARG(pcb,1);
+static void _sys_readch(pcb_t *pcb) {
+    int ch;
+    int chan = ARG(pcb, 1);
 
-	// try to get the next character
+    // try to get the next character
 
-	switch( chan ) {
+    switch (chan) {
 
-		case CHAN_CONSOLE:
-			// console input doesn't block
-			if( c_input_queue() < 1 ) {
-				RET(pcb) = E_NO_CHAR;
-				return;
-			}
-			ch = c_getchar();
-			break;
+        case CHAN_CONSOLE:
+            // console input doesn't block
+            if (c_input_queue() < 1) {
+                RET(pcb) = E_NO_CHAR;
+                return;
+            }
+            ch = c_getchar();
+            break;
 
-		case CHAN_SIO:
-			// this may block
-			ch = _sio_readc();
-			break;
+        case CHAN_SIO:
+            // this may block
+            ch = _sio_readc();
+            break;
 
-		default:
-			// bad channel code!
-			RET(pcb) = E_BAD_CHAN;
-			return;
-	}
+        default:
+            // bad channel code!
+            RET(pcb) = E_BAD_CHAN;
+            return;
+    }
 
-	// if there was a character, return it to the process;
-	// otherwise, block the process until one comes in
+    // if there was a character, return it to the process;
+    // otherwise, block the process until one comes in
 
-	if( ch >= 0 ) {
+    if (ch >= 0) {
 
-		RET(pcb) = (uint32_t) ch & 0xff;
+        RET(pcb) = (uint32_t) ch & 0xff;
 
-	} else {
+    } else {
 
-		// no character; put this process on the
-		// serial i/o input queue
+        // no character; put this process on the
+        // serial i/o input queue
 
-		_current->state = PS_BLOCKED;
+        _current->state = PS_BLOCKED;
 
-		_q_insert( &_reading, (void *) _current,
-			   (void *) _current->pid );
+        _q_insert(&_reading, (void *) _current,
+                  (void *) _current->pid);
 
-		// select a new current process
+        // select a new current process
 
-		_dispatch();
+        _dispatch();
 
-	}
+    }
 
 }
 
@@ -219,35 +220,35 @@ static void _sys_readch( pcb_t *pcb ) {
 **	status of the operation
 */
 
-static void _sys_writes( pcb_t *pcb ) {
-	int chan  = ARG(pcb,1);
-	char *buf = (char *) ARG(pcb,2);
-	int size  = ARG(pcb,3);
+static void _sys_writes(pcb_t *pcb) {
+    int chan = ARG(pcb, 1);
+    char *buf = (char *) ARG(pcb, 2);
+    int size = ARG(pcb, 3);
 
-	// this is almost insanely simple, but it does separate
-	// the low-level device access fromm the higher-level
-	// syscall implementation
+    // this is almost insanely simple, but it does separate
+    // the low-level device access fromm the higher-level
+    // syscall implementation
 
-	switch( chan ) {
+    switch (chan) {
 
-		case CHAN_CONSOLE:
-			for( int i = 0; i < size; ++i ) {
-				c_putchar( buf[i] );
-			}
-			RET(pcb) = E_SUCCESS;
-			break;
+        case CHAN_CONSOLE:
+            for (int i = 0; i < size; ++i) {
+                c_putchar(buf[i]);
+            }
+            RET(pcb) = E_SUCCESS;
+            break;
 
-		case CHAN_SIO:
-			// much simpler!
-			_sio_writes( buf, size );
-			RET(pcb) = E_SUCCESS;
-			break;
+        case CHAN_SIO:
+            // much simpler!
+            _sio_writes(buf, size);
+            RET(pcb) = E_SUCCESS;
+            break;
 
-		default:
-			RET(pcb) = E_BAD_CHAN;
-			break;
+        default:
+            RET(pcb) = E_BAD_CHAN;
+            break;
 
-	}
+    }
 
 }
 
@@ -260,32 +261,32 @@ static void _sys_writes( pcb_t *pcb ) {
 ** puts it onto the sleep queue for the specified length of time.
 */
 
-static void _sys_sleep( pcb_t *pcb ) {
-	uint32_t sleeptime = ARG(pcb,1);
+static void _sys_sleep(pcb_t *pcb) {
+    uint32_t sleeptime = ARG(pcb, 1);
 
-	if( sleeptime == 0 ) {
-	
-		// for a value of 0, just preempt
+    if (sleeptime == 0) {
 
-		_sched( _current );
+        // for a value of 0, just preempt
 
-	} else {
+        _sched(_current);
 
-		// else, set wakeup time and put it to sleep
-	
-		// turn sleep time into ticks
+    } else {
 
-		sleeptime = SECONDS_TO_TICKS(sleeptime);
+        // else, set wakeup time and put it to sleep
 
-		_current->wakeup = _system_time + sleeptime;
-		_current->state = PS_SLEEPING;
-		_q_insert( &_sleeping, (void *) pcb, (void *) _current->wakeup);
+        // turn sleep time into ticks
 
-	}
-	
-	// regardless, this process won't continue, so get a new one
+        sleeptime = SECONDS_TO_TICKS(sleeptime);
 
-	_dispatch();
+        _current->wakeup = _system_time + sleeptime;
+        _current->state = PS_SLEEPING;
+        _q_insert(&_sleeping, (void *) pcb, (void *) _current->wakeup);
+
+    }
+
+    // regardless, this process won't continue, so get a new one
+
+    _dispatch();
 }
 
 /*
@@ -301,117 +302,117 @@ static void _sys_sleep( pcb_t *pcb ) {
 **	-1
 */
 
-static void _sys_fork( pcb_t *pcb ) {
+static void _sys_fork(pcb_t *pcb) {
 
-	/*
-	** allocate a pcb
-	** allocate a stack
-	** duplicate current pcb & stack
-	** fix %ebp chain
-	** return 0 in child, pid in parent
-	*/
-	
-	pcb_t *new;
-	stack_t *stack;
-	
-	// allocate a pcb
+    /*
+    ** allocate a pcb
+    ** allocate a stack
+    ** duplicate current pcb & stack
+    ** fix %ebp chain
+    ** return 0 in child, pid in parent
+    */
 
-	new = _pcb_alloc();
-	if( new == NULL ) {
-		RET(pcb) = E_NO_PROCS;
-		return;
-	}
-	
-	// allocate a stack
+    pcb_t *new;
+    stack_t *stack;
 
-	stack = _stk_alloc();
-	if( stack == NULL ) {
-		RET(pcb) = E_NO_PROCS;
-		// don't forget to put the PCB back!
-		_pcb_dealloc( new );
-		return;
-	}
+    // allocate a pcb
 
-#ifdef DEBUG
-	c_printf( "*** _sys_fork\n" );
-	_pcb_dump( "old pcb", pcb );
-	_context_dump( "old context", pcb->context );
-	__delay( 100 );
-#endif
-	
-	// duplicate the exiting PCB and stack into the new one
+    new = _pcb_alloc();
+    if (new == NULL) {
+        RET(pcb) = E_NO_PROCS;
+        return;
+    }
 
-	_kmemcpy( (uint8_t *) new, (uint8_t *) pcb, sizeof(pcb_t) );
-	_kmemcpy( (uint8_t *) stack, (uint8_t *) pcb->stack, sizeof(stack_t) );
-	
-	// OK, we have the data structures; start to fill them in
+    // allocate a stack
 
-	new->pid = _next_pid++;
-	new->ppid = pcb->pid;
-	new->stack = stack;
-		
-	/*
-	** We duplicated the original stack contents, which
-	** means that the context pointer and ESP and EBP values
-	** in the new stack are still pointing into the original
-	** stack.  We need to correct all of these.
-	**
-	** We have to change EBP because that's how the compiled
-	** code for the user process accesses its local variables.
-	** If we didn't change this, as soon as the new process
-	** was dispatched, it would start to stomp on the local
-	** variables in the original process' stack.  We also
-       	** have to fix the EBP chain in the child process.
-	**
-	** None of this would be an issue if we were doing "real"
-	** virtual memory, as we would be talking about virtual
-	** addresses here rather than physical addresses, and all
-	** processes would share the same virtual address space
-	** layout.
-	**
-	** First, determine the distance (in bytes) between the
-	** two stacks.  This is the adjustment value we must add
-	** to the three pointers to correct them.  Note that this
-	** distance may be positive or negative, depending on the
-	** relative placement of the two stacks in memory.
-	*/
-
-	
-	int stack_offset = ( (void *) new->stack - (void *) pcb->stack );
-	
-	// add this distance to the context pointer
-
-	new->context = (context_t *)
-		( (void *) (new->context) + stack_offset ); 
-	
-	/*
-	** fix EBP and ESP
-	**
-	** this is easy, because they're just uint32_t values in
-	** the context save area)
-	**
-	** technically, we don't really need to do ESP, because
-	** it will be "restored" by the popa instruction, but
-	** since we're here....
-	*/
-	
-	REG(new,ebp) += stack_offset;
-	REG(new,esp) += stack_offset;
-	
-	// now, set the return values
-	
-	RET(pcb) = new->pid;
-	RET(new) = 0;
+    stack = _stk_alloc();
+    if (stack == NULL) {
+        RET(pcb) = E_NO_PROCS;
+        // don't forget to put the PCB back!
+        _pcb_dealloc(new);
+        return;
+    }
 
 #ifdef DEBUG
-	_pcb_dump( "new pcb", new );
-	_context_dump( "new context", new->context );
-	__delay( 300 );
+    c_printf( "*** _sys_fork\n" );
+    _pcb_dump( "old pcb", pcb );
+    _context_dump( "old context", pcb->context );
+    __delay( 100 );
 #endif
-	
-	// schedule the child; let the parent continue
-	
-	_sched( new );
+
+    // duplicate the exiting PCB and stack into the new one
+
+    _kmemcpy((uint8_t *) new, (uint8_t *) pcb, sizeof(pcb_t));
+    _kmemcpy((uint8_t *) stack, (uint8_t *) pcb->stack, sizeof(stack_t));
+
+    // OK, we have the data structures; start to fill them in
+
+    new->pid = _next_pid++;
+    new->ppid = pcb->pid;
+    new->stack = stack;
+
+    /*
+    ** We duplicated the original stack contents, which
+    ** means that the context pointer and ESP and EBP values
+    ** in the new stack are still pointing into the original
+    ** stack.  We need to correct all of these.
+    **
+    ** We have to change EBP because that's how the compiled
+    ** code for the user process accesses its local variables.
+    ** If we didn't change this, as soon as the new process
+    ** was dispatched, it would start to stomp on the local
+    ** variables in the original process' stack.  We also
+           ** have to fix the EBP chain in the child process.
+    **
+    ** None of this would be an issue if we were doing "real"
+    ** virtual memory, as we would be talking about virtual
+    ** addresses here rather than physical addresses, and all
+    ** processes would share the same virtual address space
+    ** layout.
+    **
+    ** First, determine the distance (in bytes) between the
+    ** two stacks.  This is the adjustment value we must add
+    ** to the three pointers to correct them.  Note that this
+    ** distance may be positive or negative, depending on the
+    ** relative placement of the two stacks in memory.
+    */
+
+
+    int stack_offset = ((void *) new->stack - (void *) pcb->stack);
+
+    // add this distance to the context pointer
+
+    new->context = (context_t *)
+            ((void *) (new->context) + stack_offset);
+
+    /*
+    ** fix EBP and ESP
+    **
+    ** this is easy, because they're just uint32_t values in
+    ** the context save area)
+    **
+    ** technically, we don't really need to do ESP, because
+    ** it will be "restored" by the popa instruction, but
+    ** since we're here....
+    */
+
+    REG(new, ebp) += stack_offset;
+    REG(new, esp) += stack_offset;
+
+    // now, set the return values
+
+    RET(pcb) = new->pid;
+    RET(new) = 0;
+
+#ifdef DEBUG
+    _pcb_dump( "new pcb", new );
+    _context_dump( "new context", new->context );
+    __delay( 300 );
+#endif
+
+    // schedule the child; let the parent continue
+
+    _sched(new);
 }
 
 /*
@@ -423,30 +424,30 @@ static void _sys_fork( pcb_t *pcb ) {
 **      does not return (if the attempt succeeds)
 */
 
-void _sys_exec( pcb_t *pcb ) {
-	uint32_t entry;
-	
-	// retrieve the entry point
+void _sys_exec(pcb_t *pcb) {
+    uint32_t entry;
 
-	entry = ARG(pcb,1);
+    // retrieve the entry point
 
-#ifdef DEBUG
-	c_printf( "*** _sys_exec, new entry %08x\n", entry );
-	_pcb_dump( "old pcb", pcb );
-#endif
-	
-	// reset the stack and the process context
-
-	pcb->context = _stk_setup( pcb->stack, entry );
+    entry = ARG(pcb, 1);
 
 #ifdef DEBUG
-	_pcb_dump( "new pcb", pcb );
-	_context_dump( "new context", pcb->context );
-	__delay( 200 );
+    c_printf( "*** _sys_exec, new entry %08x\n", entry );
+    _pcb_dump( "old pcb", pcb );
 #endif
 
-	// philosophical question:  let this process continue,
-	// or schedule it?  we choose the former.
+    // reset the stack and the process context
+
+    pcb->context = _stk_setup(pcb->stack, entry);
+
+#ifdef DEBUG
+    _pcb_dump( "new pcb", pcb );
+    _context_dump( "new context", pcb->context );
+    __delay( 200 );
+#endif
+
+    // philosophical question:  let this process continue,
+    // or schedule it?  we choose the former.
 }
 
 /*
@@ -457,33 +458,33 @@ void _sys_exec( pcb_t *pcb ) {
 ** does not return
 */
 
-static void _sys_exit( pcb_t *pcb ) {
+static void _sys_exit(pcb_t *pcb) {
 
 #ifdef DEBUG
-	c_printf( "*** _sys_exit, PID %d STATUS %d\n", pcb->pid, ARG(pcb,1) );
+    c_printf( "*** _sys_exit, PID %d STATUS %d\n", pcb->pid, ARG(pcb,1) );
 #endif
 
-	// mark this as gone, but not forgotten
+    // mark this as gone, but not forgotten
 
-	pcb->state = PS_ZOMBIE;
-	
-	// reparent all its children
+    pcb->state = PS_ZOMBIE;
 
-	for( int i = 0; i < N_PCBS; ++i ) {
-		if( _pcbs[i].ppid == pcb->pid &&
-		    _pcbs[i].state >= PS_FIRST_LIVE ) {
-			_pcbs[i].ppid = PID_INIT;
-		}
-	}
-	
-	// see if our parent is waiting for us; either give it
-	// our status and clean us up, or turn us into a zombie
+    // reparent all its children
 
-	_zombify( pcb, ARG(pcb,1) );
-	
-	// pick a new current process
+    for (int i = 0; i < N_PCBS; ++i) {
+        if (_pcbs[i].ppid == pcb->pid &&
+            _pcbs[i].state >= PS_FIRST_LIVE) {
+            _pcbs[i].ppid = PID_INIT;
+        }
+    }
 
-	_dispatch();
+    // see if our parent is waiting for us; either give it
+    // our status and clean us up, or turn us into a zombie
+
+    _zombify(pcb, ARG(pcb, 1));
+
+    // pick a new current process
+
+    _dispatch();
 }
 
 /*
@@ -496,78 +497,78 @@ static void _sys_exit( pcb_t *pcb ) {
 **	an error code if there are no children in the system
 */
 
-static void _sys_wait( pcb_t *pcb ) {
-	int i;
-	pcb_t *c1, *c2;
+static void _sys_wait(pcb_t *pcb) {
+    int i;
+    pcb_t *c1, *c2;
 
-	/*
-	** Locate a child process that is either on the zombie queue
-	** (c1) or still executing (c2).  Keep a pointer to its PCB
-	** so that we can collect its information.
-	*/
+    /*
+    ** Locate a child process that is either on the zombie queue
+    ** (c1) or still executing (c2).  Keep a pointer to its PCB
+    ** so that we can collect its information.
+    */
 
-	c1 = c2 = NULL;
-	for( i = 0; i < N_PCBS; ++i ) {
-		if( _pcbs[i].ppid == pcb->pid &&
-		    _pcbs[i].state >= PS_FIRST_LIVE ) {
-			if( _pcbs[i].state == PS_ZOMBIE ) {
-				c1 = &_pcbs[i];
-			} else {
-				c2 = &_pcbs[i];
-			}
-		}
-	}
+    c1 = c2 = NULL;
+    for (i = 0; i < N_PCBS; ++i) {
+        if (_pcbs[i].ppid == pcb->pid &&
+            _pcbs[i].state >= PS_FIRST_LIVE) {
+            if (_pcbs[i].state == PS_ZOMBIE) {
+                c1 = &_pcbs[i];
+            } else {
+                c2 = &_pcbs[i];
+            }
+        }
+    }
 
-	// if we didn't find one, we're done
+    // if we didn't find one, we're done
 
-	if( c1 == NULL && c2 == NULL ) {
-		RET(pcb) = E_NO_PROCS;
-		return;
-	}
+    if (c1 == NULL && c2 == NULL) {
+        RET(pcb) = E_NO_PROCS;
+        return;
+    }
 
-	// OK, we know we have at least one child out there
+    // OK, we know we have at least one child out there
 
-	// did we find a zombie?  if so, collect its information and return
+    // did we find a zombie?  if so, collect its information and return
 
-	if( c1 != NULL ) {
-		void *tmp;
-		
-		// pull this process off the zombie queue
+    if (c1 != NULL) {
+        void *tmp;
 
-		tmp = _q_remove_by_data( &_zombie, c1 );
-		if( tmp != c1 ) {
-			_kpanic( "_sys_wait", "zombie queue remove failed" );
-		}
-		
-		// copy the requested data into the caller
+        // pull this process off the zombie queue
 
-		RET(pcb) = ARG(c1,1);
+        tmp = _q_remove_by_data(&_zombie, c1);
+        if (tmp != c1) {
+            _kpanic("_sys_wait", "zombie queue remove failed");
+        }
 
-		// clean up the child
+        // copy the requested data into the caller
 
-		_pcb_cleanup( c1 );
-		
-		// we're done
+        RET(pcb) = ARG(c1, 1);
 
-		return;
-	}
+        // clean up the child
 
-	// no zombie child; verify that there's still an active child
+        _pcb_cleanup(c1);
 
-	if( c2 == NULL ) {
-		// this shouldn't be able to happen
-		_pcb_dump( "waiting parent", pcb );
-		_kpanic( "_sys_wait", "parent has children, but none found" );
-	}
+        // we're done
 
-	// found an active child, so we'll block until it (or another) exits
+        return;
+    }
 
-	pcb->state = PS_WAITING;
-	_q_insert( &_waiting, (void *) pcb, (void *) (pcb->pid) );
+    // no zombie child; verify that there's still an active child
 
-	// we're blocked, so select a new current process
+    if (c2 == NULL) {
+        // this shouldn't be able to happen
+        _pcb_dump("waiting parent", pcb);
+        _kpanic("_sys_wait", "parent has children, but none found");
+    }
 
-	_dispatch();
+    // found an active child, so we'll block until it (or another) exits
+
+    pcb->state = PS_WAITING;
+    _q_insert(&_waiting, (void *) pcb, (void *) (pcb->pid));
+
+    // we're blocked, so select a new current process
+
+    _dispatch();
 }
 
 /*
@@ -579,59 +580,88 @@ static void _sys_wait( pcb_t *pcb ) {
 **      status of the termination attempt
 */
 
-void _sys_kill( pcb_t *pcb ) {
-	uint32_t pid;
-	pcb_t *victim;
-	
-	// find the victim
+void _sys_kill(pcb_t *pcb) {
+    uint32_t pid;
+    pcb_t *victim;
 
-	pid = ARG(pcb,1);
-	victim = _pcb_find( pid );
+    // find the victim
 
-	// if there wasn't one, report that to the caller
+    pid = ARG(pcb, 1);
+    victim = _pcb_find(pid);
 
-	if( victim == NULL ) {
-		RET(pcb) = E_NO_PROCS;
-		return;
-	}
-	
-	// we have a victim; figure out where it is
+    // if there wasn't one, report that to the caller
 
-	switch( victim->state ) {
+    if (victim == NULL) {
+        RET(pcb) = E_NO_PROCS;
+        return;
+    }
 
-		case PS_RUNNING:
-			// it's us!!!  turn this into an exit() call
-			ARG(pcb,1) = EXIT_KILLED;
-			_sys_exit( pcb );
-			return;
-		
-		case PS_ZOMBIE:
-			// the victim is already dead
-			RET(pcb) = E_NO_PROCS;
-			return;
-		
+    // we have a victim; figure out where it is
 
-		case PS_READY:
-		case PS_SLEEPING:
-		case PS_BLOCKED:
-		case PS_WAITING:
-			// let _zombify() handle it
-			_zombify( victim, EXIT_KILLED );
-			break;
+    switch (victim->state) {
 
-		case PS_UNUSED:
-		case PS_NEW:
-			// should never happen!!!
-			c_printf( "*** _sys_kill, victim state %d\n", 
-				  victim->state );
-			_kpanic( "_sys_kill", "victim is unused or new???" );
+        case PS_RUNNING:
+            // it's us!!!  turn this into an exit() call
+            ARG(pcb, 1) = EXIT_KILLED;
+            _sys_exit(pcb);
+            return;
 
-		default:
-			// should never happen!!!
-			c_printf( "*** _sys_kill, victim state %d\n", 
-				  victim->state );
-			_kpanic( "_sys_kill", "bad victim state" );
-	}
+        case PS_ZOMBIE:
+            // the victim is already dead
+            RET(pcb) = E_NO_PROCS;
+            return;
+
+
+        case PS_READY:
+        case PS_SLEEPING:
+        case PS_BLOCKED:
+        case PS_WAITING:
+            // let _zombify() handle it
+            _zombify(victim, EXIT_KILLED);
+            break;
+
+        case PS_UNUSED:
+        case PS_NEW:
+            // should never happen!!!
+            c_printf("*** _sys_kill, victim state %d\n",
+                     victim->state);
+            _kpanic("_sys_kill", "victim is unused or new???");
+
+        default:
+            // should never happen!!!
+            c_printf("*** _sys_kill, victim state %d\n",
+                     victim->state);
+            _kpanic("_sys_kill", "bad victim state");
+    }
+}
+
+/*
+** _sys_getgfxcontext - gets a graphics context that the process can draw to, contains a palette and bitmap to draw to
+**		will reset context if called again by same process. backbuffer will not be drawn to screen until user calls
+ * 		the drawscreen() syscall
+ *
+** implements:  GFX_CONTEXT * _sys_getgfxcontext(void);
+**
+** returns:
+**      graphics context which contains backbuffer BITMAP and PALETTE. Defined in graphics.h
+*/
+GFX_CONTEXT *_sys_getgfxcontext(pcb_t *pcb) {
+
+    RET(pcb) = _kgfx_new_context(pcb->pid);
+}
+
+/*
+** _sys_drawscreen - Draws the backbuffer of the process's graphics context to the screen
+ * 		if it is the os' active context
+**
+** implements:  void drawscreen(void);
+**
+** returns:
+**      nothing
+*/
+void _sys_drawscreen(pcb_t *pcb) {
+
+    _kgfx_draw_screen(pcb->pid);
 }
 
 void _sys_clear_filetable( pcb_t *pcb) {
@@ -660,40 +690,42 @@ void _sys_read_filename( pcb_t *pcb ) {
 ** initialize the syscall module
 */
 
-void _sys_init( void ) {
+void _sys_init(void) {
 
-	/*
-	** Set up the syscall jump table.  We do this here
-	** to ensure that the association between syscall
-	** code and function address is correct even if the
-	** codes change.
-	*/
+    /*
+    ** Set up the syscall jump table.  We do this here
+    ** to ensure that the association between syscall
+    ** code and function address is correct even if the
+    ** codes change.
+    */
 
-	_syscalls[ SYS_exit ]		= _sys_exit;
-	_syscalls[ SYS_readch ]		= _sys_readch;
-	_syscalls[ SYS_writes ]		= _sys_writes;
-	_syscalls[ SYS_fork ]		= _sys_fork;
-	_syscalls[ SYS_exec ]		= _sys_exec;
-	_syscalls[ SYS_wait ]		= _sys_wait;
-	_syscalls[ SYS_kill ]		= _sys_kill;
-	_syscalls[ SYS_sleep ]		= _sys_sleep;
-	_syscalls[ SYS_getpid ]		= _sys_getpid;
-	_syscalls[ SYS_getppid ]	= _sys_getppid;
-	_syscalls[ SYS_gettime ]	= _sys_gettime;
+    _syscalls[ SYS_exit ]       = _sys_exit;
+    _syscalls[ SYS_readch ]     = _sys_readch;
+    _syscalls[ SYS_writes ]     = _sys_writes;
+    _syscalls[ SYS_fork ]       = _sys_fork;
+    _syscalls[ SYS_exec ]       = _sys_exec;
+    _syscalls[ SYS_wait ]       = _sys_wait;
+    _syscalls[ SYS_kill ]       = _sys_kill;
+    _syscalls[ SYS_sleep ]      = _sys_sleep;
+    _syscalls[ SYS_getpid ]     = _sys_getpid;
+    _syscalls[ SYS_getppid ]    = _sys_getppid;
+    _syscalls[ SYS_gettime ]    = _sys_gettime;
     _syscalls[ SYS_readfile ]   = _sys_read_filename;
     _syscalls[ SYS_writefile ]  = _sys_write_filename;
     _syscalls[ SYS_clearfiles ] = _sys_clear_filetable;
+    _syscalls[SYS_getgfxcontext] = _sys_getgfxcontext;
+    _syscalls[SYS_drawscreen]   = _sys_drawscreen;
 
-	// initialize the zombie and waiting queues
+    // initialize the zombie and waiting queues
 
-	_q_reset( &_zombie, NULL );
-	_q_reset( &_waiting, NULL );
+    _q_reset(&_zombie, NULL);
+    _q_reset(&_waiting, NULL);
 
-	// install the second-stage ISR
+    // install the second-stage ISR
 
-	__install_isr( INT_VEC_SYSCALL, _sys_isr );
+    __install_isr(INT_VEC_SYSCALL, _sys_isr);
 
-	// MORE TO COME?
+    // MORE TO COME?
 
-	c_puts( " SYSCALL" );
+    c_puts(" SYSCALL");
 }

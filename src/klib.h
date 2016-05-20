@@ -5,7 +5,7 @@
 **
 ** Author:	CSCI-452 class of 20155
 **
-** Contributor:
+** Contributor: Matthew Cheman mnc3139
 **
 ** Description:	kernel support library functions
 */
@@ -43,7 +43,7 @@
 ** Could be used, e.g., by _kpanic to print a traceback
 */
 
-uint32_t _get_ebp( void );
+uint32_t _get_ebp(void);
 
 /*
 ** _put_char_or_code( ch )
@@ -52,7 +52,15 @@ uint32_t _get_ebp( void );
 ** character, in which case its hex code is printed
 */
 
-void _put_char_or_code( int ch );
+void _put_char_or_code(int ch);
+
+/*
+** _khandlekey( char code )
+**
+** Process keypresses for special use by the kernel. If the code was used, returns 1 else 0
+*/
+
+int _khandlekey(char code);
 
 /*
 ** _kmemset - initialize all bytes of a block of memory to a specific value
@@ -60,7 +68,7 @@ void _put_char_or_code( int ch );
 ** usage:  _kmemclr( buffer, length, value )
 */
 
-void _kmemset( register byte_t *buf, register uint32_t len, register uint8_t value );
+void _kmemset(register byte_t *buf, register uint32_t len, register uint8_t value);
 
 /*
 ** _kmemclr - initialize all bytes of a block of memory to zero
@@ -68,7 +76,7 @@ void _kmemset( register byte_t *buf, register uint32_t len, register uint8_t val
 ** usage:  _kmemclr( buffer, length )
 */
 
-void _kmemclr( register byte_t *buf, register uint32_t len );
+void _kmemclr(register byte_t *buf, register uint32_t len);
 
 /*
 ** _kmemcpy - copy a block from one place to another
@@ -78,13 +86,13 @@ void _kmemclr( register byte_t *buf, register uint32_t len );
 ** may not correctly deal with overlapping buffers
 */
 
-void _kmemcpy( register byte_t *dst, register byte_t *src, register uint32_t len );
+void _kmemcpy(register byte_t *dst, register byte_t *src, register uint32_t len);
 
 /*
 ** _kstrcmp - compare two NUL-terminated strings
 */
 
-int _kstrcmp( register const char *s1, register const char *s2 );
+int _kstrcmp(register const char *s1, register const char *s2);
 
 /*
 ** _kpanic - kernel-level panic routine
@@ -95,7 +103,7 @@ int _kstrcmp( register const char *s1, register const char *s2 );
 ** (e.g., printing a stack traceback)
 */
 
-void _kpanic( char *mod, char *msg );
+void _kpanic(char *mod, char *msg);
 
 #endif
 

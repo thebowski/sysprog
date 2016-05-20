@@ -5,7 +5,7 @@
 **
 ** Author:	CSCI-452 class of 20155
 **
-** Contributor:
+** Contributor: Matthew Cheman mnc3139
 **
 ** Description:	assembly-language user-level library functions
 */
@@ -49,6 +49,8 @@ SYSCALL(gettime)
 SYSCALL(readfile)
 SYSCALL(writefile)
 SYSCALL(clearfiles)
+SYSCALL(getgfxcontext)
+SYSCALL(drawscreen)
 
 // This is a bogus system call; it's here so that we can test
 // our handling of out-of-range syscall codes in the syscall ISR.

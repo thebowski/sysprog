@@ -5,14 +5,15 @@
 **
 ** Author:	CSCI-452 class of 20155
 **
-** Contributor:
+** Contributor: Matthew Cheman mnc3139
 **
 ** Description:	C implementations of kernel library functions
 */
 
-#define	__SP_KERNEL__
+#define    __SP_KERNEL__
 
 #include "common.h"
+#include "kgraphics.h"
 
 /*
 ** PRIVATE DEFINITIONS
@@ -45,13 +46,27 @@
 ** character, in which case its hex code is printed
 */
 
-void _put_char_or_code( int ch ) {
+void _put_char_or_code(int ch) {
 
-	if( ch >= ' ' && ch < 0x7f ) {
-		c_putchar( ch );
-	} else {
-		c_printf( "\\x%02x", ch );
-	}
+    if (ch >= ' ' && ch < 0x7f) {
+        c_putchar(ch);
+    } else {
+        c_printf("\\x%02x", ch);
+    }
+}
+
+/*
+** _khandlekey( char code )
+**
+** Process keypresses for special use by the kernel. If the code was used, returns 1 else 0
+*/
+
+int _khandlekey(char code) {
+    if (code == '\t') {
+        _kgfx_next_context();
+        return 1;
+    }
+    return 0;
 }
 
 /*
@@ -60,11 +75,11 @@ void _put_char_or_code( int ch ) {
 ** usage:  _kmemset( buffer, length, value )
 */
 
-void _kmemset( register byte_t *buf, register uint32_t len, register uint8_t value ) {
+void _kmemset(register byte_t *buf, register uint32_t len, register uint8_t value) {
 
-	while( len-- ) {
-		*buf++ = value;
-	}
+    while (len--) {
+        *buf++ = value;
+    }
 
 }
 
@@ -74,11 +89,11 @@ void _kmemset( register byte_t *buf, register uint32_t len, register uint8_t val
 ** usage:  _kmemclr( buffer, length )
 */
 
-void _kmemclr( register byte_t *buf, register uint32_t len ) {
+void _kmemclr(register byte_t *buf, register uint32_t len) {
 
-	while( len-- ) {
-		*buf++ = 0;
-	}
+    while (len--) {
+        *buf++ = 0;
+    }
 
 }
 
@@ -90,11 +105,11 @@ void _kmemclr( register byte_t *buf, register uint32_t len ) {
 ** may not correctly deal with overlapping buffers
 */
 
-void _kmemcpy( register byte_t *dst, register byte_t *src, register uint32_t len ) {
+void _kmemcpy(register byte_t *dst, register byte_t *src, register uint32_t len) {
 
-	while( len-- ) {
-		*dst++ = *src++;
-	}
+    while (len--) {
+        *dst++ = *src++;
+    }
 
 }
 
@@ -102,12 +117,12 @@ void _kmemcpy( register byte_t *dst, register byte_t *src, register uint32_t len
 ** _kstrcmp - compare two NUL-terminated strings
 */
 
-int _kstrcmp( register const char *s1, register const char *s2 ) {
+int _kstrcmp(register const char *s1, register const char *s2) {
 
-	while( *s1 != 0 && (*s1 == *s2) )
-		++s1, ++s2;
+    while (*s1 != 0 && (*s1 == *s2))
+        ++s1, ++s2;
 
-	return( *(const unsigned char *)s1 - *(const unsigned char *)s2 );
+    return (*(const unsigned char *) s1 - *(const unsigned char *) s2);
 }
 
 
@@ -123,19 +138,19 @@ int _kstrcmp( register const char *s1, register const char *s2 ) {
 ** if it isn't NULL, followed by a newline
 */
 
-void _kpanic( char *mod, char *msg ) {
+void _kpanic(char *mod, char *msg) {
 
-	c_puts( "\n\n***** KERNEL PANIC *****\n\n" );
-	c_printf( "Module:  %s\n", mod );
-	if( msg != NULL ) {
-		c_printf( "Message: %s\n", msg );
-	}
+    c_puts("\n\n***** KERNEL PANIC *****\n\n");
+    c_printf("Module:  %s\n", mod);
+    if (msg != NULL) {
+        c_printf("Message: %s\n", msg);
+    }
 
-	//
-	// This might be a good place to do a stack frame
-	// traceback
-	//
+    //
+    // This might be a good place to do a stack frame
+    // traceback
+    //
 
-	__panic( "KERNEL PANIC" );
+    __panic("KERNEL PANIC");
 
 }
