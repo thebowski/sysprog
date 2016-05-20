@@ -4,7 +4,7 @@
 #define SEND_PORT 0xFEED
 #define DEST_PORT 0xFEED
 #define TEST_BUF_L 3
-#define PACKET_DUMP_LEN 16
+#define PACKET_DUMP_LEN 32
 
 #include "c_io.h"
 #include "network.h"

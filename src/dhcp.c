@@ -37,10 +37,6 @@ packet_t dhcp_discover_p = {.packet_data = { 0x00, 0x44, 0x00, 0x43, 0x00, 0xEE,
 	}
 };
 
-
-void dhcp_handshake(){
-}
-
 dhcp_packet_t *dhcp_discover( dhcp_packet_t *dest ){
 	new_ipv4_header( &(dest->ip_header),
 			 (ipv4_addr_t){.addr={255,255,255,255}},

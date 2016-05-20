@@ -66,7 +66,7 @@ dhcp_packet_t *dhcp_discover( dhcp_packet_t *dest );
 ** Returns:
 **     dhcp_packet_t * ----- Location of the request packet
 */
-packet_t *dhcp_discover_copy( );
+packet_t *dhcp_discover_copy( void );
 
 /*
 ** dhcp_data_hton
