@@ -176,7 +176,7 @@ int32_t user_d(void) {
     BITMAP imatt = create_bitmap(100, 100, -1, image_matt);
 
     GFX_CONTEXT *ctx = getgfxcontext();
-    ctx->palette = palette_matt;
+    ctx->palette = (PALETTE*)palette_matt;
 
     int x = 0, y = 0, dir = 0;
     int sx = 0, sy = 0, sy2 = 0;
@@ -400,7 +400,7 @@ int32_t user_f(void) {
     GFX_CONTEXT *ctx = getgfxcontext();
 
     BITMAP jupiter = create_bitmap(320, 200, -1, jupiter_image);
-    ctx->palette = jupiter_palette;
+    ctx->palette = (PALETTE*)jupiter_palette;
 
     blit(ctx->backbuffer, &jupiter, 0, 0);
     while (1) {

@@ -292,14 +292,14 @@ void writefile( char *filename, uint8_t data[], uint16_t size );
 **
 ** draw to the backbuffer BITMAP inside the context and modify the PALETTE before calling the drawscreen() syscall
 */
-GFX_CONTEXT * getgfxcontext();
+GFX_CONTEXT * getgfxcontext(void);
 
 /*
 ** drawscreen - draw process' graphics context to the screen if it is the active context
 **
 ** active contexts are determined by the os, they are switched between by pressing tab
 */
-void drawscreen();
+void drawscreen(void);
 
 #endif
 

@@ -640,14 +640,14 @@ void _sys_kill(pcb_t *pcb) {
 **		will reset context if called again by same process. backbuffer will not be drawn to screen until user calls
  * 		the drawscreen() syscall
  *
-** implements:  GFX_CONTEXT * _sys_getgfxcontext(void);
+** implements:  void _sys_getgfxcontext(void);
 **
 ** returns:
 **      graphics context which contains backbuffer BITMAP and PALETTE. Defined in graphics.h
 */
-GFX_CONTEXT *_sys_getgfxcontext(pcb_t *pcb) {
+static void _sys_getgfxcontext(pcb_t *pcb) {
 
-    RET(pcb) = _kgfx_new_context(pcb->pid);
+    RET(pcb) = (int) _kgfx_new_context(pcb->pid);
 }
 
 /*
@@ -659,7 +659,7 @@ GFX_CONTEXT *_sys_getgfxcontext(pcb_t *pcb) {
 ** returns:
 **      nothing
 */
-void _sys_drawscreen(pcb_t *pcb) {
+static void _sys_drawscreen(pcb_t *pcb) {
 
     _kgfx_draw_screen(pcb->pid);
 }

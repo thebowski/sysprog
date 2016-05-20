@@ -13,6 +13,7 @@
 #define    __SP_KERNEL__
 
 #include "common.h"
+#include "startup.h"
 #include "klib.h"
 #include "kgraphics.h"
 #include "graphics.h"
@@ -103,11 +104,11 @@ char guardbufferb[GUARD_BUFFER_SIZE];
 */
 
 void _kgfx_init(void) {
-    _kmemclr(context_pid, sizeof(context_pid));
+    _kmemclr((uint8_t *)context_pid, sizeof(context_pid));
     _kgfx_delete_context(0); //delete all contexts
     num_contexts = 0;
 
-    screen = create_bitmap(SCREEN_W, SCREEN_H, -1, VGA_START);
+    screen = create_bitmap(SCREEN_W, SCREEN_H, -1, (uint8_t *)VGA_START);
     font = create_bitmap(1024, 8, -1, font_data);
 
     for (int i = 0; i < FONT_BYTES; i++) {
@@ -167,7 +168,7 @@ GFX_CONTEXT *_kgfx_new_context(int pid) {
     }
 
     _kmemclr(contexts[context].backbuffer->data, VGA_SIZE);
-    _kmemcpy(&palettes[context], &default_palette, PALETTE_SIZE);
+    _kmemcpy((uint8_t *)&palettes[context], (uint8_t *)&default_palette, PALETTE_SIZE);
 
     //active_context = context;
 
