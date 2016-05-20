@@ -116,7 +116,8 @@ int32_t user_z(void);
 
 
 int32_t user_me( void) {
-    return disk_demo();
+    //return disk_demo();
+    return 0;
 }
 
 int32_t user_a( void ) {
@@ -153,7 +154,7 @@ int32_t user_a( void ) {
 //		cwrites( "\n", 1 );
 //	}
 //
-//	return( 0 );  // shut the compiler up!
+	return( 0 );  // shut the compiler up!
 }
 
 //cycle screen color
@@ -794,36 +795,23 @@ int32_t user_e(void) {
     }
 }
 
-int shotsize = sizeof(int) * 2 + 256 * 3 + SCREEN_W * SCREEN_H;
-int shotheader[2] = {SCREEN_W, SCREEN_H};
-uint8_t shotpalette[256 * 3];
 uint8_t shotbuffer[SCREEN_W * SCREEN_H];
 
 //demo
 int32_t user_g(void) {
     GFX_CONTEXT *ctx = getgfxcontext();
 
-    BITMAP screen = create_bitmap(SCREEN_W, SCREEN_H, -1, (uint8_t *)VGA_START);
     BITMAP buffer = create_bitmap(SCREEN_W, SCREEN_H, -1, shotbuffer);
 
     //load image from disk put into shotbuffer
     //ignore palettes
+    readfile("screensh", shotbuffer, SCREEN_W * SCREEN_H);
 
     blit(ctx->backbuffer, &buffer, 0, 0);
 
+    drawscreen();
     while (1){
-
-        //replace 0 with keypress or something
-        if (0){ //screenshot
-            blit(&buffer, &screen, 0, 0);
-
-            //save to disk
-            blit(ctx->backbuffer, &buffer, 0, 0);
-        }
-
-
-        drawscreen();
-
+        sleep(10);
     }
 
 

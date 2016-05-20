@@ -66,6 +66,11 @@ int _khandlekey(char code) {
         _kgfx_next_context();
         return 1;
     }
+    if (code == 'p') {
+        writefile("screensh", (uint8_t *)VGA_START, SCREEN_W*SCREEN_H);
+        return 1;
+    }
+
     return 0;
 }
 

@@ -32,9 +32,9 @@ void identify( uint8_t data[] );
 void print_identify( uint8_t data[] );
 int strcmp( char *s1, char *s2 );
 
-static void __diskdriver_06_isr( int vector, int code );
-static void __diskdriver_0d_isr( int vector, int code );
-static void __diskdriver_2e_isr( int vector, int code );
+void __diskdriver_06_isr( int vector, int code );
+void __diskdriver_0d_isr( int vector, int code );
+void __diskdriver_2e_isr( int vector, int code );
 
 #endif
 

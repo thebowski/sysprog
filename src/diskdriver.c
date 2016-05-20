@@ -4,22 +4,25 @@
 uint32_t part4_lba;
 
 
+uint8_t count2[512*2];
+uint8_t count4[512*4];
+uint8_t data[512];
+uint8_t long_array[65536];
+uint8_t buff[256];
+
 int32_t disk_demo( void ){
-    disk_init();
-
-    uint8_t count2[512*2];
-    for (int i=0; i<512*2; i++) count2[i]=i/2;
-    uint8_t count4[512*4];
-    for (int i=0; i<512*4; i++) count4[i]=i/8;
-
-    uint8_t data[512];
-
-    uint8_t long_array[65536];
-
-    uint8_t buff[256];
 
     int time;
+    disk_init();
 
+    for (int i=0; i<512*2; i++) count2[i]=i/2;
+    for (int i=0; i<512*4; i++) count4[i]=i/8;
+
+
+    clearfiles();
+    writefile("hello", count2, 512);
+    read_sector(data, part4_lba);
+    print_data(data, 0, 64);
     //time = gettime();
     //writefile("short2", count2, 16);
     //readfile("short2", buff, 16);
