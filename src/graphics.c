@@ -21,8 +21,7 @@
 #include "klib.h"
 
 #define INT_ABS(a) (((a) < 0) ? -(a): (a))
-#define CLAMP(a, min, max)  ((a) < (min)) ? (min) : (((a) >= (max)) ? (max) : (a))
-#define MIN(a, b) ((a) - (b) < 0 ? (b) : (a))
+#define CLAMP(a, min, max)  (a) = (((a) < (min)) ? (min) : (((a) >= (max)) ? (max) : (a)))
 
 
 //copies data but skips overwriting 'transparent' values
