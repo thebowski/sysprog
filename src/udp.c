@@ -1,3 +1,10 @@
+/*
+** Author:    Alexander Bobowski
+** Class:     Systems Programming
+** Professor: Prof. Carithers
+** Date:      5/19/2015
+*/
+
 #include "udp.h"
 
 udp_header_t *new_udp_header( udp_header_t *h, uint16_t source_port,

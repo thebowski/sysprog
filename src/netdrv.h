@@ -1,3 +1,10 @@
+/*
+** Author:    Alexander Bobowski
+** Class:     Systems Programming
+** Professor: Prof. Carithers
+** Date:      5/19/2015
+*/
+
 #ifndef _NETDRV_H_
 #define _NETDRV_H_
 
