@@ -793,29 +793,39 @@ int32_t user_e(void) {
     }
 }
 
+int shotsize = sizeof(int) * 2 + 256 * 3 + SCREEN_W * SCREEN_H;
+int shotheader[2] = {SCREEN_W, SCREEN_H};
+uint8_t shotpalette[256 * 3];
+uint8_t shotbuffer[SCREEN_W * SCREEN_H];
 
-/*
-** User G sleeps for 15 seconds at a time.
-*/
-
+//demo
 int32_t user_g(void) {
-    int i;
-    int32_t pid;
-    char buf[12];
+    GFX_CONTEXT *ctx = getgfxcontext();
 
-    pid = getpid();
-    cwrites("User G (", 8);
-    i = cvt_dec(buf, pid);
-    cwrites(buf, i);
-    cwrites(") running\n", 10);
-    swrites("G", 1);
-    for (i = 0; i < 5; ++i) {
-        sleep(15);
-        swrites("G", 1);
+    BITMAP screen = create_bitmap(SCREEN_W, SCREEN_H, -1, (uint8_t *)VGA_START);
+    BITMAP buffer = create_bitmap(SCREEN_W, SCREEN_H, -1, shotbuffer);
+
+    //load image from disk put into shotbuffer
+    //ignore palettes
+
+    blit(ctx->backbuffer, &buffer, 0, 0);
+
+    while (1){
+
+        //replace 0 with keypress or something
+        if (0){ //screenshot
+            blit(&buffer, &screen, 0, 0);
+
+            //save to disk
+            blit(ctx->backbuffer, &buffer, 0, 0);
+        }
+
+
+        drawscreen();
+
     }
 
-    exit(EXIT_SUCCESS);
-    return (0);  // shut the compiler up!
+
 
 }
 
