@@ -51,6 +51,9 @@ SYSCALL(writefile)
 SYSCALL(clearfiles)
 SYSCALL(getgfxcontext)
 SYSCALL(drawscreen)
+SYSCALL(reqport)
+SYSCALL(relport)
+SYSCALL(send)
 
 // This is a bogus system call; it's here so that we can test
 // our handling of out-of-range syscall codes in the syscall ISR.

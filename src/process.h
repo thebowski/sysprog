@@ -69,6 +69,9 @@
 
 #define	ARG(pcb,n)	( ( (uint32_t *) (((pcb)->context) + 1) ) [(n)] )
 
+// number of ports able to be associated with a process
+#define PS_MAX_PORTS    8
+
 /*
 ** Types
 */
@@ -117,7 +120,8 @@ typedef struct pcb {
 	int32_t		ppid;		// out parent's pid
 
 	// 16-bit fields
-
+	uint16_t        ports[ PS_MAX_PORTS ];  // The ports associated
+                                                // With the process
 	// 8-bit fields
 	uint8_t		state;		// current process state
 	uint8_t		quantum;	// remaining execution quantum

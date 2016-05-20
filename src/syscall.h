@@ -37,10 +37,13 @@
 #define SYS_clearfiles 13
 #define SYS_getgfxcontext 14
 #define SYS_drawscreen 15
+#define SYS_reqport     16
+#define SYS_relport     17
+#define SYS_send        18
 
-#define	N_SYSCALLS	16
+#define	N_SYSCALLS	19
 
-// dummy system call code to test the syscall ISR
+/* // dummy system call code to test the syscall ISR */
 
 #define	SYS_bogus	(N_SYSCALLS + 100)
 

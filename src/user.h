@@ -38,7 +38,7 @@
 ** To spawn a specific user process from the initial process,
 ** uncomment its entry in this list.
 */
-
+/*
 //	user	          baseline system calls in use
 //		   exit rdch wrts fork exec wait kill slep gpid gppd gtim
 #define	SPAWN_A	//  X    .    X    .    .    .    .    .    .    .    .
@@ -64,6 +64,7 @@
 #define	SPAWN_T	//  X    .    X    X    X    X    .    X    .    .    .
 #define	SPAWN_U	//  X    .    X    X    X    X    X    X    .    .    .
 // no user V
+*/
 
 /*
 ** Users W-Z are spawned from other processes; they

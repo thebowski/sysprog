@@ -27,6 +27,7 @@
 #include "sio.h"
 #include "diskdriver.h"
 #include "kgraphics.h"
+#include "network.h"
 
 /*
 ** PRIVATE DEFINITIONS
@@ -260,34 +261,81 @@ static void _sys_writes(pcb_t *pcb) {
 ** If the sleep time (in seconds) is 0, just preempts the process; else,
 ** puts it onto the sleep queue for the specified length of time.
 */
+static void _sys_sleep( pcb_t *pcb ) {
+	uint32_t sleeptime = ARG(pcb,1);
 
-static void _sys_sleep(pcb_t *pcb) {
-    uint32_t sleeptime = ARG(pcb, 1);
+        if (sleeptime == 0) {
 
-    if (sleeptime == 0) {
 
-        // for a value of 0, just preempt
+                // for a value of 0, just preempt
 
-        _sched(_current);
+                _sched(_current);
 
-    } else {
+        } else {
 
-        // else, set wakeup time and put it to sleep
+                // else, set wakeup time and put it to sleep
 
-        // turn sleep time into ticks
+                // turn sleep time into ticks
 
-        sleeptime = SECONDS_TO_TICKS(sleeptime);
+                sleeptime = SECONDS_TO_TICKS(sleeptime);
 
-        _current->wakeup = _system_time + sleeptime;
-        _current->state = PS_SLEEPING;
-        _q_insert(&_sleeping, (void *) pcb, (void *) _current->wakeup);
+                _current->wakeup = _system_time + sleeptime;
+                _current->state = PS_SLEEPING;
+                _q_insert(&_sleeping, (void *) pcb, (void *) _current->wakeup);
 
-    }
+        }
 
-    // regardless, this process won't continue, so get a new one
+        // regardless, this process won't continue, so get a new one
 
-    _dispatch();
+        _dispatch();
 }
+
+/*
+** _sys_reqport - ask for a port to be assigned to a process
+**
+** implements:  int32_t reqport(uint16_t portnum,
+**                              (*receive_t)(packet_t[], uint8_t ) );
+** returns:     0 if successful, non-0 if unsuccessful
+*/
+
+static void _sys_reqport( pcb_t *pcb ) {
+	uint16_t portnum = ARG(pcb,1);
+	receive_t receive = (receive_t)ARG(pcb,2);
+
+	int32_t other_pid = _request_port( portnum, receive, pcb->pid );
+	RET(pcb) = other_pid;
+}
+
+/*
+** _sys_relport - ask for a port to be assigned to a process
+**
+** implements:  void relport( uint16_t portnum )
+** returns:     Does not return
+*/
+
+static void _sys_relport( pcb_t *pcb ) {
+	uint16_t portnum = ARG(pcb,1);
+
+	_release_port( portnum, pcb->pid );
+}
+
+
+/*
+** _sys_send - Send a buffer of packets over the network.  In this case,
+**             simulated
+**
+** implements:  void send( packet_t *, uint8_t num )
+** returns:     Does not return
+*/
+
+static void _sys_send( pcb_t *pcb ) {
+        c_printf( "Entered syscall send routine\n" );
+	packet_t *packet  = (packet_t *)ARG(pcb,1);
+        uint8_t count = ARG(pcb,2);
+
+	_send( packet, count );
+}
+
 
 /*
 ** _sys_fork - create a new process
@@ -680,6 +728,7 @@ void _sys_read_filename( pcb_t *pcb ) {
     read_filename(filename, data, size);
 }
 
+
 /*
 ** PUBLIC FUNCTIONS
 */
@@ -715,6 +764,9 @@ void _sys_init(void) {
     _syscalls[ SYS_clearfiles ] = _sys_clear_filetable;
     _syscalls[SYS_getgfxcontext] = _sys_getgfxcontext;
     _syscalls[SYS_drawscreen]   = _sys_drawscreen;
+    _syscalls[ SYS_reqport ]    = _sys_reqport;
+    _syscalls[ SYS_relport ]    = _sys_relport;
+    _syscalls[ SYS_send ]       = _sys_send;
 
     // initialize the zombie and waiting queues
 

@@ -13,6 +13,7 @@
 #include "common.h"
 #include "diskdriver.h"
 #include "user.h"
+#include "network_test.h"
 
 #include "graphics.h"
 

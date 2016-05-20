@@ -23,6 +23,7 @@
 
 #include "process.h"
 #include "kgraphics.h"
+#include "network.h"
 
 /*
 ** Start of C-only definitions
@@ -259,6 +260,28 @@ int32_t swrite( char *buf );
 */
 
 int32_t cwrites( char *buf, int size );
+
+/*
+** reqport()
+**
+** Request a port
+*/
+int32_t reqport( uint16_t portnum, receive_t rec );
+
+/*
+** relport()
+**
+** Release a port
+*/
+void relport( uint16_t portnum );
+
+/*
+** send()
+**
+** Send a buffer of packets over the network
+**
+*/
+void send( packet_t *p, uint8_t num );
 
 /*
 ** swrites()
